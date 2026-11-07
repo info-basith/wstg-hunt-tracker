@@ -1,0 +1,2271 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>WSTG Hunt Tracker â€” OWASP Web Security Testing Checklist & Risk Calculator</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>ðŸ›¡ï¸</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f8fafc;
+  --sf: #ffffff;
+  --sf2: #f1f5f9;
+  --sf3: #e2e8f0;
+  --tx: #0f172a;
+  --mu: #64748b;
+  --ln: #cbd5e1;
+  --ac: #4f46e5;
+  --ac-hover: #4338ca;
+  --ac-light: #eef2ff;
+  --onac: #ffffff;
+  --ok: #16a34a;
+  --ok-bg: #dcfce7;
+  --bad: #dc2626;
+  --bad-bg: #fee2e2;
+  --wip: #d97706;
+  --wip-bg: #fef3c7;
+  --na: #64748b;
+  --na-bg: #f1f5f9;
+  --crit: #991b1b;
+  --high: #dc2626;
+  --mod: #d97706;
+  --low: #16a34a;
+  --ofi: #2563eb;
+  --radius: 8px;
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  color-scheme: light;
+}
+@media(prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #090d16;
+    --sf: #111827;
+    --sf2: #1e293b;
+    --sf3: #334155;
+    --tx: #f8fafc;
+    --mu: #94a3b8;
+    --ln: #1e293b;
+    --ac: #6366f1;
+    --ac-hover: #818cf8;
+    --ac-light: #1e1b4b;
+    --onac: #ffffff;
+    --ok: #22c55e;
+    --ok-bg: #052e16;
+    --bad: #ef4444;
+    --bad-bg: #450a0a;
+    --wip: #f59e0b;
+    --wip-bg: #451a03;
+    --na: #94a3b8;
+    --na-bg: #1e293b;
+    --crit: #f87171;
+    --high: #ef4444;
+    --mod: #f59e0b;
+    --low: #22c55e;
+    --ofi: #60a5fa;
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+    --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.4);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #090d16;
+  --sf: #111827;
+  --sf2: #1e293b;
+  --sf3: #334155;
+  --tx: #f8fafc;
+  --mu: #94a3b8;
+  --ln: #1e293b;
+  --ac: #6366f1;
+  --ac-hover: #818cf8;
+  --ac-light: #1e1b4b;
+  --onac: #ffffff;
+  --ok: #22c55e;
+  --ok-bg: #052e16;
+  --bad: #ef4444;
+  --bad-bg: #450a0a;
+  --wip: #f59e0b;
+  --wip-bg: #451a03;
+  --na: #94a3b8;
+  --na-bg: #1e293b;
+  --crit: #f87171;
+  --high: #ef4444;
+  --mod: #f59e0b;
+  --low: #22c55e;
+  --ofi: #60a5fa;
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+  --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.4);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 140px; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--tx);
+  font: 14.5px/1.55 "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+[hidden] { display: none !important; }
+a { color: var(--ac); text-decoration: none; }
+a:hover { text-decoration: underline; }
+:focus-visible { outline: 2px solid var(--ac); outline-offset: 2px; }
+
+/* Header & Controls */
+.top-header {
+  background: var(--sf);
+  border-bottom: 1px solid var(--ln);
+  position: sticky;
+  top: 0;
+  z-index: 40;
+}
+.top {
+  max-width: 1380px;
+  margin: 0 auto;
+  padding: 14px 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px 24px;
+  align-items: center;
+  justify-content: space-between;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.brand-icon {
+  font-size: 28px;
+  line-height: 1;
+}
+.brand h1 {
+  margin: 0;
+  font-size: 21px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.ver-badge {
+  font-size: 11px;
+  font-weight: 600;
+  background: var(--ac-light);
+  color: var(--ac);
+  border-radius: 4px;
+  padding: 2px 6px;
+  letter-spacing: normal;
+}
+.sub {
+  margin: 2px 0 0;
+  color: var(--mu);
+  font-size: 12.5px;
+}
+.acts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+.proj {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  background: var(--sf2);
+  padding: 3px 4px 3px 10px;
+  border-radius: var(--radius);
+  border: 1px solid var(--ln);
+}
+.proj-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--mu);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.proj select {
+  font-weight: 600;
+  background: transparent;
+  border: 0;
+  padding: 4px 6px;
+  width: auto;
+  min-width: 130px;
+  max-width: 220px;
+  color: var(--tx);
+  cursor: pointer;
+}
+.b {
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  border: 1px solid var(--ln);
+  background: var(--sf);
+  color: var(--tx);
+  border-radius: 6px;
+  padding: 6px 12px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+.b:hover {
+  background: var(--sf2);
+  border-color: var(--mu);
+}
+.b:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+.b.pri {
+  background: var(--ac);
+  border-color: var(--ac);
+  color: var(--onac);
+  font-weight: 600;
+}
+.b.pri:hover {
+  background: var(--ac-hover);
+  border-color: var(--ac-hover);
+}
+.b.dng {
+  color: var(--bad);
+}
+.b.dng:hover {
+  background: var(--bad-bg);
+  border-color: var(--bad);
+}
+.b.sm {
+  padding: 4px 8px;
+  font-size: 12px;
+}
+
+input, select, textarea {
+  font: inherit;
+  font-size: 13.5px;
+  color: var(--tx);
+  background: var(--sf);
+  border: 1px solid var(--ln);
+  border-radius: 6px;
+  padding: 7px 10px;
+  width: 100%;
+  transition: border-color 0.15s ease;
+}
+input:focus, select:focus, textarea:focus {
+  border-color: var(--ac);
+  outline: none;
+}
+input[type=checkbox] {
+  width: 19px;
+  height: 19px;
+  padding: 0;
+  accent-color: var(--ac);
+  margin: 0;
+  cursor: pointer;
+}
+textarea {
+  resize: vertical;
+  font-family: inherit;
+}
+
+/* Dashboard / Summary */
+.sum {
+  max-width: 1380px;
+  margin: 16px auto 0;
+  padding: 0 20px;
+}
+.kpi-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.kpi-card {
+  background: var(--sf);
+  border: 1px solid var(--ln);
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  cursor: pointer;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+.kpi-card:hover {
+  border-color: var(--ac);
+  transform: translateY(-1px);
+}
+.kpi-title {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--mu);
+}
+.kpi-val {
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+.kpi-sub {
+  font-size: 12px;
+  color: var(--mu);
+}
+.kpi-card.pass .kpi-val { color: var(--ok); }
+.kpi-card.issue .kpi-val { color: var(--bad); }
+.kpi-card.wip .kpi-val { color: var(--wip); }
+
+/* Progress Bar */
+.pb-wrap {
+  background: var(--sf);
+  border: 1px solid var(--ln);
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  margin-bottom: 14px;
+}
+.pb-head {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.pb-head span:last-child {
+  color: var(--mu);
+  font-weight: 400;
+}
+.pb {
+  height: 10px;
+  background: var(--sf2);
+  border-radius: 5px;
+  overflow: hidden;
+  display: flex;
+}
+.pb i {
+  height: 100%;
+  transition: width 0.3s ease;
+}
+.pb-pass { background: var(--ok); }
+.pb-issue { background: var(--bad); }
+.pb-wip { background: var(--wip); }
+.pb-done { background: var(--ac); }
+.pb-na { background: var(--na); }
+
+/* Heatmap / Test Matrix */
+.map-wrap {
+  background: var(--sf);
+  border: 1px solid var(--ln);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+}
+.map-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.map-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--tx);
+}
+.map {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+}
+.mg {
+  display: flex;
+  gap: 2.5px;
+  align-items: center;
+}
+.ml {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--mu);
+  margin-right: 3px;
+  min-width: 16px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.mc {
+  width: 12px;
+  height: 22px;
+  border: 0;
+  padding: 0;
+  border-radius: 3px;
+  background: var(--sf2);
+  cursor: pointer;
+  outline-offset: 1px;
+  transition: transform 0.1s ease, filter 0.1s ease;
+}
+.mc:hover {
+  transform: scale(1.25);
+  z-index: 10;
+  filter: brightness(1.15);
+}
+.mc.d { background: var(--ac); }
+.mc.p { background: var(--ok); }
+.mc.i { background: var(--bad); }
+.mc.n { background: var(--na); }
+.mc.w { background: var(--wip); }
+
+.lgd {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  margin-top: 10px;
+  font-size: 12px;
+  color: var(--mu);
+  align-items: center;
+}
+.lgd span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.lgd i {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+}
+
+/* Tabs */
+.tabs-wrap {
+  background: var(--sf);
+  border-bottom: 1px solid var(--ln);
+  margin-top: 16px;
+}
+.tabs {
+  max-width: 1380px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+}
+.tb {
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  background: none;
+  border: 0;
+  border-bottom: 3px solid transparent;
+  color: var(--mu);
+  padding: 12px 18px;
+  cursor: pointer;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+.tb:hover {
+  color: var(--tx);
+}
+.tb[aria-selected=true] {
+  color: var(--ac);
+  border-bottom-color: var(--ac);
+  font-weight: 700;
+}
+.tab-badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 10px;
+  background: var(--sf2);
+  color: var(--mu);
+}
+.tb[aria-selected=true] .tab-badge {
+  background: var(--ac-light);
+  color: var(--ac);
+}
+.tab-badge.badge-alert {
+  background: var(--bad);
+  color: #fff;
+}
+
+/* Sticky Toolbar */
+.bar {
+  position: sticky;
+  top: 61px;
+  z-index: 30;
+  background: var(--bg);
+  border-bottom: 1px solid var(--ln);
+  box-shadow: var(--shadow-sm);
+  backdrop-filter: blur(8px);
+}
+.bar > div {
+  max-width: 1380px;
+  margin: 0 auto;
+  padding: 10px 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+.search-box {
+  position: relative;
+  flex: 1 1 280px;
+  display: flex;
+  align-items: center;
+}
+.search-box input {
+  padding-left: 34px;
+  padding-right: 48px;
+}
+.search-icon {
+  position: absolute;
+  left: 10px;
+  font-size: 14px;
+  color: var(--mu);
+  pointer-events: none;
+}
+.kbd-hint {
+  position: absolute;
+  right: 10px;
+  font-size: 11px;
+  font-family: monospace;
+  background: var(--sf2);
+  border: 1px solid var(--ln);
+  padding: 1px 5px;
+  border-radius: 3px;
+  color: var(--mu);
+  pointer-events: none;
+}
+.bar select {
+  width: auto;
+  min-width: 150px;
+}
+.search-count {
+  font-size: 12.5px;
+  color: var(--mu);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Main Layout */
+.wrap {
+  max-width: 1380px;
+  margin: 0 auto;
+  padding: 16px 20px 80px;
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr);
+  gap: 28px;
+}
+.nav {
+  position: sticky;
+  top: 130px;
+  align-self: start;
+  max-height: calc(100vh - 150px);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 13.5px;
+  padding-right: 6px;
+}
+.nav a {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  border-radius: 6px;
+  color: var(--tx);
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.15s ease;
+}
+.nav a:hover {
+  background: var(--sf2);
+}
+.nav a.active {
+  background: var(--ac-light);
+  color: var(--ac);
+  font-weight: 700;
+}
+.nav span {
+  color: var(--mu);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  background: var(--sf2);
+  padding: 1px 6px;
+  border-radius: 10px;
+}
+.nav a.active span {
+  background: var(--ac);
+  color: var(--onac);
+}
+
+/* Category Sections */
+.cat {
+  margin-bottom: 24px;
+}
+.ch {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 24px 0 10px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--ln);
+}
+.cl {
+  all: unset;
+  cursor: pointer;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.cl h2 {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.cl-arrow {
+  display: inline-block;
+  transition: transform 0.2s ease;
+  font-size: 13px;
+  color: var(--mu);
+}
+.col .cl-arrow {
+  transform: rotate(-90deg);
+}
+.col .cbody {
+  display: none;
+}
+.cnt {
+  color: var(--mu);
+  font-size: 13px;
+  font-weight: 500;
+}
+.catnote {
+  margin: 0 0 10px;
+  color: var(--mu);
+  font-size: 13px;
+  background: var(--sf2);
+  padding: 8px 12px;
+  border-radius: 6px;
+  border-left: 3px solid var(--ac);
+}
+
+/* Test Cards */
+.t {
+  background: var(--sf);
+  border: 1px solid var(--ln);
+  border-left: 4px solid var(--ln);
+  border-radius: var(--radius);
+  margin: 9px 0;
+  box-shadow: var(--shadow-sm);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.t:hover {
+  border-color: var(--mu);
+}
+.t.done { border-left-color: var(--ac); }
+.t.wip { border-left-color: var(--wip); }
+.t[data-r=Pass] { border-left-color: var(--ok); }
+.t[data-r=Issue] { border-left-color: var(--bad); }
+.t[data-r="N/A"] { border-left-color: var(--na); }
+.t.flash {
+  animation: pulse-border 1.5s ease-out;
+}
+@keyframes pulse-border {
+  0% { box-shadow: 0 0 0 4px var(--ac); }
+  100% { box-shadow: 0 0 0 0 transparent; }
+}
+
+.hd {
+  display: flex;
+  align-items: center;
+  gap: 10px 14px;
+  padding: 11px 16px;
+  flex-wrap: wrap;
+}
+.ti {
+  flex: 1 1 280px;
+  min-width: 0;
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.wid {
+  font: 600 12.5px "JetBrains Mono", monospace;
+  color: var(--mu);
+  background: var(--sf2);
+  padding: 1px 6px;
+  border-radius: 4px;
+  border: 1px solid var(--ln);
+}
+.nm {
+  font-weight: 600;
+  color: var(--tx);
+  text-decoration: none;
+}
+.nm:hover {
+  color: var(--ac);
+}
+.t.done .nm {
+  color: var(--mu);
+}
+.tag {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--mu);
+  border: 1px solid var(--ln);
+  border-radius: 10px;
+  padding: 1px 7px;
+}
+.tag.add {
+  color: var(--ac);
+  border-color: var(--ac);
+  background: var(--ac-light);
+}
+.chip {
+  display: inline-block;
+  font-size: 11.5px;
+  font-weight: 700;
+  background: var(--sf2);
+  border: 1px solid var(--ln);
+  border-radius: 4px;
+  padding: 1px 6px;
+  margin-left: 4px;
+  cursor: help;
+}
+.bd {
+  font-size: 11.5px;
+  font-weight: 700;
+  border-radius: 12px;
+  padding: 2px 10px;
+  letter-spacing: 0.02em;
+}
+.bd:empty { display: none; }
+.t[data-r=Pass] .bd { background: var(--ok-bg); color: var(--ok); }
+.t[data-r=Issue] .bd { background: var(--bad-bg); color: var(--bad); }
+.t[data-r="N/A"] .bd { background: var(--na-bg); color: var(--na); }
+.t.wip:not([data-r]) .bd, .t.wip[data-r=""] .bd { background: var(--wip-bg); color: var(--wip); }
+
+.has-note {
+  font-size: 11px;
+  font-weight: 600;
+  background: var(--sf2);
+  color: var(--mu);
+  padding: 1px 7px;
+  border-radius: 10px;
+  border: 1px solid var(--ln);
+}
+
+/* Card Details */
+.det {
+  display: none;
+  border-top: 1px solid var(--ln);
+  padding: 14px 18px 16px;
+  background: var(--sf);
+  border-radius: 0 0 var(--radius) var(--radius);
+}
+.t.open .det { display: block; }
+.cols {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1.3fr;
+  gap: 20px;
+}
+.det h4 {
+  margin: 0 0 6px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--mu);
+  font-weight: 700;
+}
+.det ul {
+  margin: 0;
+  padding-left: 18px;
+}
+.det li {
+  margin: 4px 0;
+  font-size: 13.5px;
+}
+.tool {
+  display: inline-block;
+  background: var(--sf2);
+  border: 1px solid var(--ln);
+  border-radius: 4px;
+  padding: 2px 8px;
+  margin: 0 4px 5px 0;
+  font-size: 12.5px;
+  font-weight: 500;
+}
+.cw {
+  font-size: 13px;
+  margin: 0 0 4px;
+}
+
+.fl {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px dashed var(--ln);
+  align-items: end;
+}
+.fl label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--mu);
+  display: block;
+}
+.fl select, .fl input, .fl textarea {
+  margin-top: 4px;
+}
+.fl .wide {
+  grid-column: 1 / -1;
+}
+.fl-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* Panes */
+.pn {
+  max-width: 1380px;
+  margin: 0 auto;
+  padding: 20px 20px 80px;
+}
+.pane-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+.pane-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+/* Issue Log */
+.is {
+  background: var(--sf);
+  border: 1px solid var(--ln);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  margin: 14px 0;
+  box-shadow: var(--shadow-sm);
+}
+.is-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--ln);
+}
+.is-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.is h3 {
+  margin: 0;
+  font-size: 16.5px;
+  font-weight: 700;
+}
+.sev-badge {
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 2px 10px;
+  border-radius: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.sev-Critical { background: #fee2e2; color: #b91c1c; }
+.sev-High { background: #ffedd5; color: #c2410c; }
+.sev-Moderate { background: #fef3c7; color: #b45309; }
+.sev-Low { background: #dcfce7; color: #15803d; }
+.sev-OFI { background: #dbeafe; color: #1d4ed8; }
+
+.g {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+.g label, .rk label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--mu);
+  display: block;
+}
+.g input, .g select, .g textarea {
+  margin-top: 4px;
+}
+.g .w2 { grid-column: span 2; }
+.g .w3 { grid-column: 1 / -1; }
+.is-foot {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--ln);
+}
+
+/* Risk Calculator */
+.rk {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+  margin-top: 14px;
+}
+.rk fieldset {
+  border: 1px solid var(--ln);
+  border-radius: var(--radius);
+  background: var(--sf);
+  padding: 14px 16px 18px;
+  margin: 0;
+  box-shadow: var(--shadow-sm);
+}
+.rk legend {
+  font-weight: 700;
+  font-size: 13.5px;
+  padding: 0 8px;
+  color: var(--ac);
+}
+.rk label {
+  margin-top: 10px;
+}
+.rk select {
+  margin-top: 4px;
+}
+.res {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  align-items: center;
+  margin: 20px 0;
+  background: var(--sf);
+  padding: 16px 20px;
+  border-radius: var(--radius);
+  border: 1px solid var(--ln);
+}
+.res div {
+  font-size: 13px;
+  color: var(--mu);
+}
+.res b {
+  display: block;
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--tx);
+  line-height: 1.1;
+  margin-top: 2px;
+}
+#sv[data-s=Critical] { color: var(--bad); }
+#sv[data-s=High] { color: var(--high); }
+#sv[data-s=Moderate] { color: var(--wip); }
+#sv[data-s=Low] { color: var(--ok); }
+
+table {
+  border-collapse: collapse;
+  background: var(--sf);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  margin-top: 10px;
+}
+td, th {
+  border: 1px solid var(--ln);
+  padding: 9px 18px;
+  text-align: center;
+  font-size: 13.5px;
+}
+th {
+  background: var(--sf2);
+  font-weight: 600;
+}
+td.on {
+  background: var(--ac);
+  color: var(--onac);
+  font-weight: 700;
+  box-shadow: inset 0 0 0 2px rgba(255,255,255,0.4);
+}
+
+/* CWE Page */
+.cg h3 {
+  margin: 22px 0 8px;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--tx);
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--ln);
+}
+.cg ul {
+  margin: 0;
+  padding-left: 20px;
+  columns: 2;
+  column-gap: 30px;
+}
+.cg li {
+  break-inside: avoid;
+  margin: 4px 0;
+  font-size: 13.5px;
+}
+
+/* Help details */
+details.help {
+  background: var(--sf);
+  border: 1px solid var(--ln);
+  border-radius: var(--radius);
+  padding: 10px 16px;
+  margin: 0 0 14px;
+  font-size: 13.5px;
+}
+details.help summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--ac);
+}
+details.help p {
+  margin: 8px 0 0;
+  color: var(--mu);
+}
+
+/* Empty states */
+.empty {
+  color: var(--mu);
+  padding: 30px 0;
+  text-align: center;
+  font-size: 14.5px;
+}
+
+/* Toast */
+#toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: var(--tx);
+  color: var(--bg);
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-size: 13.5px;
+  font-weight: 600;
+  box-shadow: var(--shadow-md);
+  z-index: 100;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.2s ease;
+  pointer-events: none;
+}
+#toast.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Responsive */
+@media(max-width: 960px) {
+  .wrap { display: block; }
+  .nav {
+    position: static;
+    max-height: none;
+    flex-direction: row;
+    overflow-x: auto;
+    gap: 6px;
+    margin-bottom: 12px;
+    padding-bottom: 6px;
+  }
+  .nav a { white-space: nowrap; }
+  .cols, .fl, .g { grid-template-columns: 1fr; }
+  .g .w2 { grid-column: auto; }
+  .cg ul { columns: 1; }
+  html { scroll-padding-top: 120px; }
+  .bar { top: 0; }
+}
+
+/* Print Stylesheet */
+@media print {
+  .top-header, .tabs-wrap, .bar, .nav, .acts, .fl-actions, .is-foot, #toast {
+    display: none !important;
+  }
+  body { background: #fff; color: #000; font-size: 12pt; }
+  .wrap { max-width: 100%; padding: 0; }
+  .t { border: 1px solid #ddd; break-inside: avoid; }
+  .t.open .det, .det { display: block !important; }
+  .pn { display: block !important; max-width: 100%; padding: 0; }
+}
+</style>
+</head>
+<body>
+
+<header class="top-header">
+  <div class="top">
+    <div class="brand">
+      <span class="brand-icon">ðŸ›¡ï¸</span>
+      <div>
+        <h1>WSTG Hunt Tracker <span class="ver-badge">OWASP WSTG v4.2</span></h1>
+        <p class="sub">Comprehensive Web Security Testing Checklist, Vulnerability Logger &amp; Risk Rating</p>
+      </div>
+    </div>
+    <div class="acts">
+      <div class="proj">
+        <span class="proj-label">Target:</span>
+        <select id="proj" aria-label="Selected Target Scope"></select>
+        <button class="b sm" id="pnew" type="button" title="Create new target scope">+ New</button>
+        <button class="b sm" id="pren" type="button" title="Rename target">Rename</button>
+        <button class="b sm" id="pdup" type="button" title="Duplicate target scope">Clone</button>
+        <button class="b sm dng" id="pdel" type="button" title="Delete target">Delete</button>
+      </div>
+      <button class="b" id="theme" type="button">Theme: auto</button>
+      <button class="b" id="ex-rep" type="button" title="Export Markdown Pentest Report">ðŸ“Š Report</button>
+      <button class="b" id="exj" type="button" title="Export JSON backup">ðŸ’¾ Backup</button>
+      <button class="b" id="imp" type="button" title="Import JSON backup">ðŸ“‚ Restore</button>
+      <button class="b" id="exc" type="button" title="Export Checklist CSV">ðŸ“‘ CSV</button>
+      <input type="file" id="file" accept="application/json,.json" hidden>
+    </div>
+  </div>
+</header>
+
+<div id="warn" style="max-width:1380px;margin:10px auto;padding:10px 20px;background:var(--bad-bg);color:var(--bad);border-radius:6px;font-weight:600;" hidden>
+  âš ï¸ Local storage is disabled or blocked in this browser. Progress will be lost on tab close. Please export a JSON backup regularly.
+</div>
+
+<section class="sum">
+  <div class="kpi-row">
+    <div class="kpi-card" id="kpi-all" title="Click to view all tests">
+      <span class="kpi-title">Total Tests</span>
+      <span class="kpi-val" id="kpi-all-val">122</span>
+      <span class="kpi-sub" id="kpi-all-sub">Across 12 categories</span>
+    </div>
+    <div class="kpi-card pass" id="kpi-pass" title="Click to filter passed tests">
+      <span class="kpi-title">Passed</span>
+      <span class="kpi-val" id="kpi-pass-val">0</span>
+      <span class="kpi-sub">Tests validated OK</span>
+    </div>
+    <div class="kpi-card issue" id="kpi-issue" title="Click to filter issues">
+      <span class="kpi-title">Vulnerabilities Found</span>
+      <span class="kpi-val" id="kpi-issue-val">0</span>
+      <span class="kpi-sub">Flagged for report</span>
+    </div>
+    <div class="kpi-card wip" id="kpi-wip" title="Click to filter in-progress tests">
+      <span class="kpi-title">In Progress</span>
+      <span class="kpi-val" id="kpi-wip-val">0</span>
+      <span class="kpi-sub">Active testing</span>
+    </div>
+  </div>
+
+  <div class="pb-wrap">
+    <div class="pb-head">
+      <span id="ov">0 of 122 tests completed (0%)</span>
+      <span id="stamp">Not saved yet</span>
+    </div>
+    <div class="pb" role="progressbar" aria-label="Testing Progress">
+      <i class="pb-pass" id="pb-p" style="width:0%"></i>
+      <i class="pb-issue" id="pb-i" style="width:0%"></i>
+      <i class="pb-wip" id="pb-w" style="width:0%"></i>
+      <i class="pb-done" id="pb-d" style="width:0%"></i>
+      <i class="pb-na" id="pb-n" style="width:0%"></i>
+    </div>
+  </div>
+
+  <div class="map-wrap">
+    <div class="map-header">
+      <span class="map-title">Interactive Test Matrix (Click any cell to jump to test)</span>
+      <div class="lgd">
+        <span><i style="background:var(--sf2)"></i> Not done</span>
+        <span><i style="background:var(--wip)"></i> In progress</span>
+        <span><i style="background:var(--ac)"></i> Done</span>
+        <span><i style="background:var(--ok)"></i> Pass</span>
+        <span><i style="background:var(--bad)"></i> Issue</span>
+        <span><i style="background:var(--na)"></i> N/A</span>
+      </div>
+    </div>
+    <div class="map" id="map"></div>
+  </div>
+</section>
+
+<div class="tabs-wrap">
+  <nav class="tabs" role="tablist">
+    <button class="tb" role="tab" data-t="list">ðŸ“‹ Checklist <span class="tab-badge" id="tb-cnt-list">122</span></button>
+    <button class="tb" role="tab" data-t="issues">ðŸš¨ Vulnerability Log <span class="tab-badge" id="tb-cnt-iss">0</span></button>
+    <button class="tb" role="tab" data-t="risk">âš–ï¸ Risk Calculator</button>
+    <button class="tb" role="tab" data-t="cwe">ðŸ“– CWE Reference Map</button>
+  </nav>
+</div>
+
+<!-- Checklist Tab -->
+<div class="bar" id="bar">
+  <div>
+    <div class="search-box">
+      <span class="search-icon">ðŸ”</span>
+      <input id="q" type="search" placeholder="Search tests, tools, CWE, objectives, notesâ€¦" aria-label="Search">
+      <span class="kbd-hint">/</span>
+    </div>
+    <select id="fs" aria-label="Filter status">
+      <option value="all">All tests</option>
+      <option value="open">Not complete</option>
+      <option value="wip">In progress</option>
+      <option value="done">Complete</option>
+      <option value="pass">Passed (OK)</option>
+      <option value="issue">Issues found</option>
+      <option value="notes">Has notes / findings</option>
+      <option value="na">N/A</option>
+    </select>
+    <button class="b sm" id="exa" type="button">Expand all</button>
+    <button class="b sm" id="coa" type="button">Collapse all</button>
+    <button class="b sm dng" id="clr" type="button">Clear checked</button>
+    <span class="search-count" id="scnt">Showing 122 tests</span>
+  </div>
+</div>
+
+<div class="wrap" id="p-list">
+  <nav class="nav" id="nav" aria-label="Categories"></nav>
+  <main>
+    <details class="help">
+      <summary>Methodology &amp; How Results are Marked</summary>
+      <p>
+        <b>Pass:</b> The security control is properly implemented and tested in according with OWASP best practices.<br>
+        <b>Issue:</b> The control is absent, bypassed, or vulnerable. Click <i>Log as issue</i> to add it to the Vulnerability Log.<br>
+        <b>N/A:</b> Not applicable to the evaluated target scope architecture.<br>
+        <b>In progress:</b> Currently under active analysis or exploitation.<br>
+        Use the <b>Target</b> dropdown in the header to switch between scopes (e.g. Production, Staging, Internal API).
+      </p>
+    </details>
+    <div id="list"></div>
+    <p class="empty" id="none" hidden>No tests match your search or filter.</p>
+  </main>
+</div>
+
+<!-- Issues Tab -->
+<div class="pn" id="p-issues" hidden>
+  <div class="pane-head">
+    <div>
+      <h2 class="pane-title">Vulnerability &amp; Findings Log</h2>
+      <p class="sub">Documented issues, evidence, implications, and remediation steps for this target.</p>
+    </div>
+    <div class="acts">
+      <button class="b pri" id="addi" type="button">+ Add Vulnerability</button>
+      <button class="b" id="ex-iss-md" type="button">Export Findings Report (MD)</button>
+      <button class="b" id="ex-iss-csv" type="button">Export Issues CSV</button>
+    </div>
+  </div>
+  <div id="il"></div>
+</div>
+
+<!-- Risk Calculator Tab -->
+<div class="pn" id="p-risk" hidden>
+  <div class="pane-head">
+    <div>
+      <h2 class="pane-title">OWASP Risk Rating Calculator</h2>
+      <p class="sub">Standard OWASP Risk Rating Methodology based on Likelihood and Technical/Business Impact.</p>
+    </div>
+    <div class="acts">
+      <button class="b pri" id="r-apply" type="button">Apply to New Vulnerability</button>
+      <button class="b" id="r-reset" type="button">Reset All Factors</button>
+    </div>
+  </div>
+  <div class="rk" id="rk"></div>
+  <div class="res">
+    <div>Likelihood score<b id="ls">â€”</b></div>
+    <div>Impact score<b id="is">â€”</b></div>
+    <div>Overall risk severity<b id="sv">â€”</b></div>
+  </div>
+  <table id="mx">
+    <tr><th></th><th colspan="3">Impact</th></tr>
+    <tr><th>Likelihood</th><th>Low</th><th>Moderate</th><th>High</th></tr>
+  </table>
+</div>
+
+<!-- CWE Map Tab -->
+<div class="pn cg" id="p-cwe" hidden>
+  <div class="pane-head">
+    <div>
+      <h2 class="pane-title">WSTG to Common Weakness Enumeration (CWE) Map</h2>
+      <p class="sub">Searchable reference mapping of OWASP WSTG test categories to MITRE CWE definitions.</p>
+    </div>
+    <div class="search-box" style="max-width:320px;">
+      <span class="search-icon">ðŸ”</span>
+      <input id="q-cwe" type="search" placeholder="Search CWEs by name or numberâ€¦" aria-label="Search CWEs">
+    </div>
+  </div>
+  <div id="cwe-content"></div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+const DATA={"cats":[{"sheet":"1","title":"1. Information Gathering","items":[{"id":"1.1","wstg":"WSTG-INFO-01","name":"Conduct Search Engine Discovery Reconnaissance for Information Leakage","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/01-Information_Gathering/01-Conduct_Search_Engine_Discovery_Reconnaissance_for_Information_Leakage","desc":"- Identify what sensitive design and configuration information of the application, system, or organization is exposed directly (on the organization's website) or indirectly (via third-party services).","tools":"Google Hacking\nShodan\nRecon-ng","top10":"NA","cwe":"NA"},{"id":"1.2","wstg":"WSTG-INFO-02","name":"Fingerprint Web Server","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/01-Information_Gathering/02-Fingerprint_Web_Server","desc":"- Determine the version and type of a running web server to enable further discovery of any known vulnerabilities.","tools":"Wappalyzer\nNikto","top10":"A5\nA6","cwe":"CWE-756\nCWE-1352"},{"id":"1.3","wstg":"WSTG-INFO-03","name":"Review Webserver Metafiles for Information Leakage","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/01-Information_Gathering/03-Review_Webserver_Metafiles_for_Information_Leakage","desc":"- Identify hidden or obfuscated paths and functionality through the analysis of metadata files (robots.txt, <META> tag, sitemap.xml)\n- Extract and map other information that could lead to a better understanding of the systems at hand.","tools":"Browser\nCurl\nBurpsuite/ZAP","top10":"A1","cwe":"CWE-200"},{"id":"1.4","wstg":"WSTG-INFO-04","name":"Enumerate Applications on Webserver","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/01-Information_Gathering/04-Enumerate_Applications_on_Webserver","desc":"- Enumerate the applications within the scope that exist on a web server.\n- Find applications hosted in the webserver (Virtual hosts/Subdomain), non-standard ports, DNS zone transfers","tools":"dnsrecon\nNmap","top10":"NA","cwe":"NA"},{"id":"1.5","wstg":"WSTG-INFO-05","name":"Review Webpage Content for Information Leakage","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/01-Information_Gathering/05-Review_Webpage_Content_for_Information_Leakage","desc":"- Review webpage comments, metadata, and redirect bodies to find any information leakage.\n- Gather JavaScript files and review the JS code to better understand the application and to find any information leakage.\n- Identify if source map files or other front-end debug files exist.","tools":"Browser\nCurl\nBurpsuite/ZAP","top10":"A1","cwe":"CWE-200\nCWE-540"},{"id":"1.6","wstg":"WSTG-INFO-06","name":"Identify Application Entry Points","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/01-Information_Gathering/06-Identify_Application_Entry_Points","desc":"- Identify possible entry and injection points through request and response analysis which covers hidden fields, parameters, methods HTTP header analysis","tools":"OWASP ASD\nBurpsuite/ZAP","top10":"NA","cwe":"NA"},{"id":"1.7","wstg":"WSTG-INFO-07","name":"Map Execution Paths Through Application","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/01-Information_Gathering/07-Map_Execution_Paths_Through_Application","desc":"- Map the target application and understand the principal workflows.\n- Use HTTP(s) Proxy Spider/Crawler feature aligned with application walkthrough","tools":"Burpsuite/ZAP","top10":"NA","cwe":"NA"},{"id":"1.8","wstg":"WSTG-INFO-08","name":"Fingerprint Web Application Framework","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/01-Information_Gathering/08-Fingerprint_Web_Application_Framework","desc":"- Fingerprint the components being used by the web applications.\n- Find the type of web application framework/CMS from HTTP headers, Cookies, Source code, Specific files and folders, Error message.","tools":"Whatweb\nWappalyzer\nCMSMap","top10":"A5\nA6","cwe":"CWE-756\nCWE-1104"},{"id":"1.9","wstg":"WSTG-INFO-09","name":"Fingerprint Web Application","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/01-Information_Gathering/09-Fingerprint_Web_Application","desc":"N/A, This content has been merged into: WSTG-INFO-08","tools":"NA","top10":"NA","cwe":"NA"},{"id":"1.10","wstg":"WSTG-INFO-10","name":"Map Application Architecture","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/01-Information_Gathering/10-Map_Application_Architecture","desc":"- Understand the architecture of the application and the technologies in use.\n- Identify application architecture whether on Application and Network components:\nApplicaton: Web server, CMS, PaaS, Serverless, Microservices, Static storage, Third party services/APIs\nNetwork and Security: Reverse proxy, IPS, WAF","tools":"WAFW00F\nNmap","top10":"NA","cwe":"NA"}]},{"sheet":"2","title":"2. Configuration and Deploy Management Testing","items":[{"id":"2.1","wstg":"WSTG-CONF-01","name":"Test Network Infrastructure Configuration","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/02-Configuration_and_Deployment_Management_Testing/01-Test_Network_Infrastructure_Configuration","desc":"- Review the applications' configurations set across the network and validate that they are not vulnerable.\n- Validate that used frameworks and systems are secure and not susceptible to known vulnerabilities due to unmaintained software or default settings and credentials.","tools":"Nessus\nNmap","top10":"A1\nA5\nA6","cwe":"CWE-284\nCWE-1349\nCWE-1352"},{"id":"2.2","wstg":"WSTG-CONF-02","name":"Test Application Platform Configuration","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/02-Configuration_and_Deployment_Management_Testing/02-Test_Application_Platform_Configuration","desc":"- Ensure that defaults and known files have been removed.\n- Review configuration and server handling (40*, 50*)\n- Validate that no debugging code or extensions are left in the production environments.\n- Review the logging mechanisms set in place for the application including Log Location, Log Storage , Log Rotation, Log Access Control, Log Review","tools":"Browser\nNikto\nCIS Benchmarks","top10":"A1\nA5\nA9","cwe":"CWE-13\nCWE-117\nCWE-223\nCWE-200\nCWE-201\nCWE-489\nCWE-532\nCWE-548\nCWE-651\nCWE-778"},{"id":"2.3","wstg":"WSTG-CONF-03","name":"Test File Extensions Handling for Sensitive Information","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/02-Configuration_and_Deployment_Management_Testing/03-Test_File_Extensions_Handling_for_Sensitive_Information","desc":"- Dirbust sensitive file extensions, or extensions that might contain raw data (*e.g.* scripts, raw data, credentials, etc.).\n- Find important file, information (.asa , .inc , .sql ,zip, tar, pdf, txt, etc)\n- Validate that no system framework bypasses exist on the rules set.","tools":"Browser\nNikto\nDirSearch\nffuf","top10":"A1","cwe":"CWE-200\nCWE-425\nCWE-552"},{"id":"2.4","wstg":"WSTG-CONF-04","name":"Review Old Backup and Unreferenced Files for Sensitive Information","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/02-Configuration_and_Deployment_Management_Testing/04-Review_Old_Backup_and_Unreferenced_Files_for_Sensitive_Information","desc":"- Find and analyse unreferenced files that might contain sensitive information.\n- Check JS source code, comments, cache file, backup file (.old, .bak, .inc, .src) and guessing of filename","tools":"Browser\nNikto\nDirSearch\nffuf","top10":"A1","cwe":"CWE-200\nCWE-531\nCWE-538"},{"id":"2.5","wstg":"WSTG-CONF-05","name":"Enumerate Infrastructure and Application Admin Interfaces","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/02-Configuration_and_Deployment_Management_Testing/05-Enumerate_Infrastructure_and_Application_Admin_Interfaces","desc":"- Identify hidden administrator interfaces and functionality.\n- Directory and file enumeration, comments and links in source (/admin, /administrator, /backoffice, /backend, etc), alternative server port (Tomcat/8080)","tools":"Burpsuite/ZAP\nDirSearch\nffuf","top10":"A1\nA4","cwe":"CWE-284\nCWE-419"},{"id":"2.6","wstg":"WSTG-CONF-06","name":"Test HTTP Methods","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/02-Configuration_and_Deployment_Management_Testing/06-Test_HTTP_Methods","desc":"- Enumerate supported HTTP methods using OPTIONS\n- Test for access control bypass (GET->HEAD->FOO)\n- Test HTTP method overriding techniques.","tools":"netcat\ncurl","top10":"A5","cwe":"CWE-650\nCWE-749"},{"id":"2.7","wstg":"WSTG-CONF-07","name":"Test HTTP Strict Transport Security","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/02-Configuration_and_Deployment_Management_Testing/07-Test_HTTP_Strict_Transport_Security","desc":"- Review the HSTS header and its validity.\n- Identify HSTS header on Web server through HTTP response header:\ncurl -s -D- https://domain.com/ | grep Strict","tools":"Burpsuite/ZAP\ncurl","top10":"A5","cwe":"CWE-523"},{"id":"2.8","wstg":"WSTG-CONF-08","name":"Test RIA Cross Domain Policy","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/02-Configuration_and_Deployment_Management_Testing/08-Test_RIA_Cross_Domain_Policy","desc":"Analyse the permissions allowed from the policy files (crossdomain.xml/clientaccesspolicy.xml) and allow-access-from.","tools":"Burpsuite/ZAP\ncurl","top10":"A5","cwe":"CWE-942"},{"id":"2.9","wstg":"WSTG-CONF-09","name":"Test File Permission","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/02-Configuration_and_Deployment_Management_Testing/09-Test_File_Permission","desc":"- Review and Identify any rogue file permissions.\n- Identify configuration file whose permissions are set to world-readable from the installation by default.","tools":"Burpsuite/ZAP\nNikto","top10":"A1\nA5","cwe":"CWE-552\nCWE-732"},{"id":"2.10","wstg":"WSTG-CONF-10","name":"Test for Subdomain Takeover","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/02-Configuration_and_Deployment_Management_Testing/10-Test_for_Subdomain_Takeover","desc":"- Enumerate all possible domains (previous and current).\n- Identify forgotten or misconfigured domains.","tools":"Dnsrecon","top10":"NA","cwe":"CWE-673"},{"id":"2.11","wstg":"WSTG-CONF-11","name":"Test Cloud Storage","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/02-Configuration_and_Deployment_Management_Testing/11-Test_Cloud_Storage","desc":"- Assess that the access control configuration for the storage services is properly in place.","tools":"AWS CLI\nS3Scanner","top10":"A1","cwe":"CWE-264"},{"id":"2.12","wstg":"WSTG-CONF-12","name":"Testing for Content Security Policy","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/02-Configuration_and_Deployment_Management_Testing/12-Test_for_Content_Security_Policy","desc":"- Review the Content-Security-Policy header or meta element to identify misconfigurations.","tools":"Burpsuite CSP Auditor","top10":"A5","cwe":"CWE-1021"},{"id":"2.13","wstg":"WSTG-CONF-13","name":"Test Path Confusion","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/02-Configuration_and_Deployment_Management_Testing/13-Test_for_Path_Confusion","desc":"- Make sure application paths are configured correctly.","tools":"Burpsuite/ZAP","top10":"A5","cwe":"CWE-436"}]},{"sheet":"3","title":"3. Identity Management Testing","items":[{"id":"3.1","wstg":"WSTG-IDNT-01","name":"Test Role Definitions","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/03-Identity_Management_Testing/01-Test_Role_Definitions","desc":"- Identify and document roles used by the application.\n- Attempt to switch, change, or access another role.\n- Review the granularity of the roles and the needs behind the permissions given.","tools":"Burpsuite/ZAP","top10":"A4","cwe":"CWE-266\nCWE-269"},{"id":"3.2","wstg":"WSTG-IDNT-02","name":"Test User Registration Process","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/03-Identity_Management_Testing/02-Test_User_Registration_Process","desc":"- Verify that the identity requirements for user registration are aligned with business and security requirements.\n- Validate the registration process.","tools":"Burpsuite/ZAP","top10":"A4","cwe":"CWE-419"},{"id":"3.3","wstg":"WSTG-IDNT-03","name":"Test Account Provisioning Process","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/03-Identity_Management_Testing/03-Test_Account_Provisioning_Process","desc":"- Verify which accounts may provision other accounts and of what type.","tools":"Burpsuite/ZAP","top10":"A4","cwe":"CWE-269\nCWE-280"},{"id":"3.4","wstg":"WSTG-IDNT-04","name":"Testing for Account Enumeration and Guessable User Account","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/03-Identity_Management_Testing/04-Testing_for_Account_Enumeration_and_Guessable_User_Account","desc":"- Review processes that pertain to user identification (*e.g.* registration, login, etc.).\n- Enumerate users where possible through response analysis.","tools":"Burpsuite/ZAP","top10":"A7","cwe":"CWE-204"},{"id":"3.5","wstg":"WSTG-IDNT-05","name":"Testing for Weak or Unenforced Username Policy","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/03-Identity_Management_Testing/05-Testing_for_Weak_or_Unenforced_Username_Policy","desc":"- Determine whether a consistent account name structure renders the application vulnerable to account enumeration.\n- User account names are often highly structured (e.g. Joe Bloggs account name is jbloggs and Fred Nurks account name is fnurks) and valid account names can easily be guessed.\n- Determine whether the application's error messages permit account enumeration.","tools":"Burpsuite/ZAP","top10":"A7","cwe":"CWE-204"}]},{"sheet":"4","title":"4. Authentication Testing","items":[{"id":"4.1","wstg":"WSTG-ATHN-01","name":"Testing for Credentials Transported over an Encrypted Channel","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/04-Authentication_Testing/01-Testing_for_Credentials_Transported_over_an_Encrypted_Channel","desc":"N/A, This content has been merged into: WSTG-CRYP-03","tools":"NA","top10":"NA","cwe":"NA"},{"id":"4.2","wstg":"WSTG-ATHN-02","name":"Testing for Default Credentials","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/04-Authentication_Testing/02-Testing_for_Default_Credentials","desc":"- Determine whether the application has any User accounts with default passwords.","tools":"Browser\nBurpsuite/ZAP\nHydra","top10":"A7","cwe":"CWE-1392"},{"id":"4.3","wstg":"WSTG-ATHN-03","name":"Testing for Weak Lock Out Mechanism","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/04-Authentication_Testing/03-Testing_for_Weak_Lock_Out_Mechanism","desc":"- Evaluate the account lockout mechanism's ability to mitigate brute force password guessing.\n- Evaluate the unlock mechanism's resistance to unauthorized account unlocking.","tools":"Browser\nBurpsuite/ZAP\nHydra","top10":"A7","cwe":"CWE-307"},{"id":"4.4","wstg":"WSTG-ATHN-04","name":"Testing for Bypassing Authentication Schema","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/04-Authentication_Testing/04-Testing_for_Bypassing_Authentication_Schema","desc":"- Ensure that authentication is applied across all services that require it.\n- Force browsing (/admin/main.php, /page.asp?authenticated=yes), Parameter Modification, Session ID prediction, SQL Injection","tools":"Burpsuite/ZAP","top10":"A1\nA7","cwe":"CWE-287\nCWE-288\nCWE-290\nCWE-294\nCWE-302\nCWE-304\nCWE-306\nCWE-425\nCWE-804"},{"id":"4.5","wstg":"WSTG-ATHN-05","name":"Testing for Vulnerable Remember Password","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/04-Authentication_Testing/05-Testing_for_Vulnerable_Remember_Password","desc":"- Validate that the generated session is managed securely and do not put the user's credentials in danger  (e.g., cookie)\n- Verify that the credentials are not stored in clear text, but are hashed. Autocompleted=off?","tools":"Burpsuite/ZAP","top10":"A4\nA5","cwe":"CWE-315\nCWE-522\nCWE-524"},{"id":"4.6","wstg":"WSTG-ATHN-06","name":"Testing for Browser Cache Weaknesses","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/04-Authentication_Testing/06-Testing_for_Browser_Cache_Weaknesses","desc":"- Review if the application stores sensitive information on the client-side.\n- Review if access can occur without authorization.\n- Check browser history issue by clicking \"Back\" button after logging out.\n- Check browser cache issue from HTTP response headers (Cache-Control: no-cache)","tools":"Browser\nBurpsuite/ZAP","top10":"A4","cwe":"CWE-525"},{"id":"4.7","wstg":"WSTG-ATHN-07","name":"Testing for Weak Password Policy","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/04-Authentication_Testing/07-Testing_for_Weak_Password_Policy","desc":"- Determine the resistance of the application against brute Force password guessing using available password dictionaries by evaluating the length, complexity, reuse, and aging requirements of passwords.\n- Review whether new User accounts are created with weak or predictable passwords.","tools":"Burpsuite/ZAP\nHydra","top10":"A7","cwe":"CWE-521\nCWE-1391"},{"id":"4.8","wstg":"WSTG-ATHN-08","name":"Testing for Weak Security Question Answer","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/04-Authentication_Testing/08-Testing_for_Weak_Security_Question_Answer","desc":"- Determine the complexity and how straight-forward the questions are (Weak pre-generated questions, Weak self-generated question)\n- Assess possible user answers and brute force capabilities.","tools":"Browser\nBurpsuite/ZAP","top10":"A7","cwe":"CWE-640"},{"id":"4.9","wstg":"WSTG-ATHN-09","name":"Testing for Weak Password Change or Reset Functionalities","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/04-Authentication_Testing/09-Testing_for_Weak_Password_Change_or_Reset_Functionalities","desc":"- Determine whether the password change and reset functionality allows accounts to be compromised.\n- Test password reset (Display old password in plain-text?, Send via email?, Random token on confirmation email ?)\n- Test password change (Need old password?)","tools":"Browser\nBurpsuite/ZAP","top10":"A7","cwe":"CWE-620\nCWE-640"},{"id":"4.10","wstg":"WSTG-ATHN-10","name":"Testing for Weaker Authentication in Alternative Channel","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/04-Authentication_Testing/10-Testing_for_Weaker_Authentication_in_Alternative_Channel","desc":"- Identify alternative authentication channels.\n- Assess the security measures used and if any bypasses exists on the alternative channels.","tools":"Browser\nBurpsuite/ZAP","top10":"A7","cwe":"CWE-288"},{"id":"4.11","wstg":"WSTG-ATHN-11","name":"Testing Multi-Factor Authentication (MFA)","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/04-Authentication_Testing/11-Testing_Multi-Factor_Authentication","desc":"- Identify the type of MFA used by the application.\n- Determine whether the MFA implementation is robust and secure.\n- Attempt to bypass the MFA.","tools":"Browser\nBurpsuite/ZAP","top10":"A7","cwe":"CWE-288\nCWE-304\nCWE-308"}]},{"sheet":"5","title":"5. Authorization Testing","items":[{"id":"5.1","wstg":"WSTG-ATHZ-01","name":"Testing Directory Traversal File Include","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/05-Authorization_Testing/01-Testing_Directory_Traversal_File_Include","desc":"- Identify injection points that pertain to path traversal.\n- Assess bypassing techniques and identify the extent of path traversal (dot-dot-slash attack, Local/Remote file inclusion)","tools":"Burpsuite/ZAP","top10":"A1","cwe":"CWE-22\nCWE-23\nCWE-35\nCWE-829"},{"id":"5.2","wstg":"WSTG-ATHZ-02","name":"Testing for Bypassing Authorization Schema","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/05-Authorization_Testing/02-Testing_for_Bypassing_Authorization_Schema","desc":"- Assess if horizontal or vertical access is possible.\n- Access to Administrative functions by force browsing (/admin/addUser)","tools":"Burpsuite/ZAP","top10":"A1","cwe":"CWE-285\nCWE-732\nCWE-862\nCWE-863"},{"id":"5.3","wstg":"WSTG-ATHZ-03","name":"Testing for Privilege Escalation","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/05-Authorization_Testing/03-Testing_for_Privilege_Escalation","desc":"- Identify injection points related to role/privilege manipulation. For example: Change some param groupid=2 to groupid=1\n- Verify that it is not possible for a user to modify their privileges or roles inside the application\n- Fuzz or otherwise attempt to bypass security measures.","tools":"Burpsuite/ZAP","top10":"A1","cwe":"CWE-269\nCWE-639"},{"id":"5.4","wstg":"WSTG-ATHZ-04","name":"Testing for Insecure Direct Object References","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/05-Authorization_Testing/04-Testing_for_Insecure_Direct_Object_References","desc":"- Identify points where object references may occur.\n- Assess the access control measures and if they're vulnerable to IDOR. For example: Force changing parameter value (?invoice=123 -> ?invoice=456)","tools":"Burpsuite/ZAP","top10":"A1","cwe":"CWE-639"},{"id":"5.5","wstg":"WSTG-ATHZ-05","name":"Testing for OAuth Weaknesses","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/05-Authorization_Testing/05-Testing_for_OAuth_Weaknesses","desc":"- Determine if OAuth2 implementation is vulnerable or using a deprecated or custom implementation.","tools":"Burpsuite/ZAP","top10":"A1","cwe":"CWE-290\nCWE-345\nCWE-798"},{"id":"5.6","wstg":"ATHZ-EXT-01","name":"Testing for Missing Function Level Access Control","url":null,"desc":"- Enumerate functions and endpoints that are not linked from the UI for the current role (admin panels, internal APIs, debug/export actions) using crawling, JS source review, and API specs.\n- Call each function directly with a lower-privileged or unauthenticated session and confirm the server rejects it independently of whether the UI exposes a link or button.\n- Pay particular attention to functions added after the main authorization logic was written (new features, admin tooling bolted on later).","tools":"Burpsuite/ZAP\nffuf\nBrowser DevTools","top10":"A1","cwe":"CWE-285\nCWE-306\nCWE-862","added":true,"addedLabel":"Broken Access Control (A01:2021) extra"},{"id":"5.7","wstg":"ATHZ-EXT-02","name":"Testing for HTTP Method Based Access Control Bypass","url":null,"desc":"- For every endpoint that enforces access control, repeat the request with alternative HTTP methods (GET↔POST↔PUT↔PATCH↔DELETE) and with method override headers/params (X-HTTP-Method-Override).\n- Check whether authorization is enforced consistently across all methods a route accepts, not only the one the UI normally uses.\n- Test OPTIONS and HEAD requests for information disclosure or unintended bypass of filters that only inspect specific methods.","tools":"Burpsuite/ZAP\nCurl","top10":"A1","cwe":"CWE-16\nCWE-650","added":true,"addedLabel":"Broken Access Control (A01:2021) extra"},{"id":"5.8","wstg":"ATHZ-EXT-03","name":"Testing for Client-Side Enforcement of Access Control","url":null,"desc":"- Identify access control decisions made only in client-side code: hidden or disabled UI elements, JavaScript route guards, feature flags evaluated in the browser.\n- Inspect the client bundle/app state for role data, hidden routes or disabled actions and attempt the corresponding server request directly.\n- Confirm that removing or editing client-side checks (via DevTools, proxy, or rebuilding the app) has no effect because the server independently re-checks authorization.","tools":"Browser DevTools\nBurpsuite/ZAP","top10":"A1","cwe":"CWE-602","added":true,"addedLabel":"Broken Access Control (A01:2021) extra"},{"id":"5.9","wstg":"ATHZ-EXT-04","name":"Testing for CORS Misconfiguration Enabling Unauthorized Access","url":null,"desc":"- Send requests with attacker-controlled Origin headers and review whether Access-Control-Allow-Origin reflects arbitrary or wildcard origins, especially alongside Access-Control-Allow-Credentials: true.\n- Check for overly permissive origin validation (e.g. substring or regex matches that allow attacker-registerable domains, null origin acceptance).\n- Assess whether a successful cross-origin read of authenticated responses would expose sensitive data or allow state-changing actions.","tools":"Burpsuite/ZAP\nCurl\nBrowser DevTools","top10":"A1","cwe":"CWE-346\nCWE-942","added":true,"addedLabel":"Broken Access Control (A01:2021) extra"},{"id":"5.10","wstg":"ATHZ-EXT-05","name":"Testing for Access Control Bypass via Token or Claim Tampering","url":null,"desc":"- Decode JWTs/session tokens and attempt to modify role, scope, tenant or permission claims, then replay the request (including algorithm confusion, alg:none and signature-stripping attacks).\n- Test whether the server actually validates the signature and claims on every request, rather than trusting values cached at login.\n- Check whether access control decisions rely on client-supplied headers or cookies (e.g. X-User-Role, X-Admin) that can be set or edited directly.","tools":"jwt_tool\nBurpsuite/ZAP","top10":"A1","cwe":"CWE-287\nCWE-290\nCWE-345\nCWE-347","added":true,"addedLabel":"Broken Access Control (A01:2021) extra"},{"id":"5.11","wstg":"ATHZ-EXT-06","name":"Testing for Cross-Tenant Data Isolation (Multi-Tenant Access Control)","url":null,"desc":"- In multi-tenant applications, identify every object, report, export, search index and notification that could leak across tenant boundaries.\n- Using two accounts in different tenants/organizations, attempt to read, modify or enumerate the other tenant's objects by substituting IDs, slugs or tenant identifiers in requests.\n- Check background and asynchronous processes too (webhooks, scheduled jobs, shared caches, search/autocomplete) and not only the main request/response flow.","tools":"Burpsuite/ZAP","top10":"A1","cwe":"CWE-668\nCWE-639","added":true,"addedLabel":"Broken Access Control (A01:2021) extra"},{"id":"5.12","wstg":"ATHZ-EXT-07","name":"Testing for Access Control Bypass via Deprecated or Shadow Endpoints","url":null,"desc":"- Identify older API/application versions, legacy routes, or endpoints referenced in JS bundles, mobile app binaries, API specs or change logs that may still be reachable.\n- Confirm that deprecated or beta endpoints enforce the same authorization logic as their current equivalents, rather than relying on obscurity or being \"not linked anymore\".\n- Verify that removing a route from documentation or navigation actually removes or re-authorizes access, rather than just hiding the link.","tools":"Browser\nffuf\nBurpsuite/ZAP\ndnsrecon","top10":"A1","cwe":"CWE-862\nCWE-1059","added":true,"addedLabel":"Broken Access Control (A01:2021) extra"},{"id":"5.13","wstg":"ATHZ-EXT-08","name":"Testing for Missing Access Control on Cached or Static Responses","url":null,"desc":"- Check whether responses containing personalized or sensitive data set appropriate Cache-Control, Pragma and Vary headers, and are not cached by shared/CDN caches across users.\n- Attempt to request another user's cached page or API response (e.g. via predictable cache keys, missing Vary: Authorization/Cookie) after they have accessed it.\n- Review exported files, generated PDFs/reports and signed URLs for expiry, scope and whether they remain accessible without re-checking authorization.","tools":"Browser\nBurpsuite/ZAP","top10":"A1","cwe":"CWE-524\nCWE-525","added":true,"addedLabel":"Broken Access Control (A01:2021) extra"}],"note":"Items 5.6–5.13 extend the original WSTG authorization tests (5.1–5.5) with the broader set of Broken Access Control (OWASP A01:2021) failure modes seen in real-world engagements — function-level checks, HTTP verb bypass, client-side-only enforcement, CORS, token tampering, multi-tenant isolation, shadow endpoints and cache leakage."},{"sheet":"6","title":"6. Session Management Testing","items":[{"id":"6.1","wstg":"WSTG-SESS-01","name":"Testing for Session Management Schema","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/06-Session_Management_Testing/01-Testing_for_Session_Management_Schema","desc":"- Gather session tokens, for the same user and for different users where possible.\n- Analyze and ensure that enough randomness exists to stop session forging attacks.\n- Modify cookies that are not signed and contain information that can be manipulated.","tools":"Burpsuite/ZAP","top10":"A2\nA4","cwe":"CWE-315\nCWE-330\nCWE-539\nCWE-694"},{"id":"6.2","wstg":"WSTG-SESS-02","name":"Testing for Cookies Attributes","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/06-Session_Management_Testing/02-Testing_for_Cookies_Attributes","desc":"- Ensure that the proper security configuration is set for cookies (HTTPOnly and Secure flag, Samesite=Strict)","tools":"Burpsuite/ZAP","top10":"A5","cwe":"CWE-16\nCWE-614\nCWE-1004\nCWE-1275"},{"id":"6.3","wstg":"WSTG-SESS-03","name":"Testing for Session Fixation","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/06-Session_Management_Testing/03-Testing_for_Session_Fixation","desc":"- Analyze the authentication mechanism and its flow.\n- Force cookies and assess the impact.\n- Check whether the application renew the cookie after a successfully user authentication.","tools":"Burpsuite/ZAP","top10":"A7","cwe":"CWE-384"},{"id":"6.4","wstg":"WSTG-SESS-04","name":"Testing for Exposed Session Variables","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/06-Session_Management_Testing/04-Testing_for_Exposed_Session_Variables","desc":"- Ensure that proper encryption is implemented (Encryption & Reuse of session Tokens vulnerabilities).\n- Review the caching configuration.\n- Assess the channel and methods' security (Send sessionID with GET method ?)","tools":"Burpsuite/ZAP","top10":"A7","cwe":"CWE-598"},{"id":"6.5","wstg":"WSTG-SESS-05","name":"Testing for Cross Site Request Forgery","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/06-Session_Management_Testing/05-Testing_for_Cross_Site_Request_Forgery","desc":"- Determine whether it is possible to initiate requests on a user's behalf that are not initiated by the user.\n- Conduct URL analysis, Direct access to functions without any token.","tools":"Burpsuite/ZAP","top10":"A1","cwe":"CWE-352"},{"id":"6.6","wstg":"WSTG-SESS-06","name":"Testing for Logout Functionality","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/06-Session_Management_Testing/06-Testing_for_Logout_Functionality","desc":"- Assess the logout UI.\n- Analyze the session timeout and if the session is properly killed after logout.","tools":"Burpsuite/ZAP","top10":"A7","cwe":"CWE-613"},{"id":"6.7","wstg":"WSTG-SESS-07","name":"Testing Session Timeout","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/06-Session_Management_Testing/07-Testing_Session_Timeout","desc":"- Validate that a hard session timeout exists, after the timeout has passed, all session tokens should be destroyed or be unusable.","tools":"Burpsuite/ZAP","top10":"A7","cwe":"CWE-613"},{"id":"6.8","wstg":"WSTG-SESS-08","name":"Testing for Session Puzzling","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/06-Session_Management_Testing/08-Testing_for_Session_Puzzling","desc":"- Identify all session variables.\n- Break the logical flow of session generation.\n- Check whether the application uses the same session variable for more than one purpose","tools":"Burpsuite/ZAP","top10":"A7","cwe":"CWE-841"},{"id":"6.9","wstg":"WSTG-SESS-09","name":"Testing for Session Hijacking","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/06-Session_Management_Testing/09-Testing_for_Session_Hijacking","desc":"- Identify vulnerable session cookies.\n- Hijack vulnerable cookies and assess the risk level.","tools":"Burpsuite/ZAP","top10":"A2","cwe":"CWE-523"},{"id":"6.10","wstg":"WSTG-SESS-10","name":"Testing JSON Web Tokens","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/06-Session_Management_Testing/10-Testing_JSON_Web_Tokens","desc":"- Determine whether the JWTs expose sensitive information.\n- Determine whether the JWTs can be tampered with or modified.","tools":"Burpsuite/ZAP","top10":"A7","cwe":"CWE-345\nCWE-757\nCWE-798"}]},{"sheet":"7","title":"7. Data Validation Testing","items":[{"id":"7.1","wstg":"WSTG-INPV-01","name":"Testing for Reflected Cross Site Scripting","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/07-Input_Validation_Testing/01-Testing_for_Reflected_Cross_Site_Scripting","desc":"- Identify variables that are reflected in responses.\n- Assess the input they accept and the encoding that gets applied on return (if any).","tools":"Burpsuite/ZAP","top10":"A3","cwe":"CWE-79"},{"id":"7.2","wstg":"WSTG-INPV-02","name":"Testing for Stored Cross Site Scripting","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/07-Input_Validation_Testing/02-Testing_for_Stored_Cross_Site_Scripting","desc":"- Identify stored input that is reflected on the client-side.\n- Assess the input they accept and the encoding that gets applied on return (if any).","tools":"Burpsuite/ZAP","top10":"A3","cwe":"CWE-79"},{"id":"7.3","wstg":"WSTG-INPV-03","name":"Testing for HTTP Verb Tampering","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/07-Input_Validation_Testing/03-Testing_for_HTTP_Verb_Tampering","desc":"N/A, This content has been merged into: WSTG-CONF-06","tools":"NA","top10":"NA","cwe":"NA"},{"id":"7.4","wstg":"WSTG-INPV-04","name":"Testing for HTTP Parameter Pollution","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/07-Input_Validation_Testing/04-Testing_for_HTTP_Parameter_Pollution","desc":"- Identify the backend and the parsing method used.\n- Assess injection points and try bypassing input filters using HPP.","tools":"Burpsuite/ZAP","top10":"A3","cwe":"CWE-235"},{"id":"7.5","wstg":"WSTG-INPV-05","name":"Testing for SQL Injection","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/07-Input_Validation_Testing/05-Testing_for_SQL_Injection","desc":"- Identify SQL injection points.\n- Assess the severity of the injection and the level of access that can be achieved through it.","tools":"Burpsuite/ZAP SQLMap\nNoSQLMap","top10":"A3","cwe":"CWE-89"},{"id":"7.6","wstg":"WSTG-INPV-06","name":"Testing for LDAP Injection","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/07-Input_Validation_Testing/06-Testing_for_LDAP_Injection","desc":"- Identify LDAP injection points:\n/ldapsearch?user=*\nuser=*user=*)(uid=*))(|(uid=*\npass=password\n- Assess the severity of the injection:","tools":"Burpsuite/ZAP","top10":"A3","cwe":"CWE-90"},{"id":"7.7","wstg":"WSTG-INPV-07","name":"Testing for XML Injection","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/07-Input_Validation_Testing/07-Testing_for_XML_Injection","desc":"- Identify XML injection points with XML Meta Characters:\n', \" , <>, <!--/-->, &, <![CDATA[ / ]]>, XXE, TAG\n- Assess the types of exploits that can be attained and their severities.\n","tools":"Burpsuite/ZAP\nWfuzz","top10":"A5","cwe":"CWE-91\nCWE-611\nCWE-652"},{"id":"7.8","wstg":"WSTG-INPV-08","name":"Testing for SSI Injection","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/07-Input_Validation_Testing/08-Testing_for_SSI_Injection","desc":"- Identify SSI injection points (Presense of .shtml extension) with these characters:\n< ! # = / . \" - > and [a-zA-Z0-9]\n- Assess the severity of the injection.\n","tools":"Burpsuite/ZAP","top10":"A3","cwe":"CWE-97"},{"id":"7.9","wstg":"WSTG-INPV-09","name":"Testing for XPath Injection","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/07-Input_Validation_Testing/09-Testing_for_XPath_Injection","desc":"- Identify XPATH injection points by checking for XML error enumeration by supplying a single quote ('):\nUsername: ‘ or ‘1’ = ‘1\nPassword: ‘ or ‘1’ = ‘1","tools":"Burpsuite/ZAP","top10":"A3","cwe":"CWE-91\nCWE-643"},{"id":"7.10","wstg":"WSTG-INPV-10","name":"Testing for IMAP SMTP Injection","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/07-Input_Validation_Testing/10-Testing_for_IMAP_SMTP_Injection","desc":"- Identify IMAP/SMTP injection points (Header, Body, Footer) with special characters (i.e.: \\, ‘, “, @, #, !, |)\n- Understand the data flow and deployment structure of the system.\n- Assess the injection impacts.","tools":"Burpsuite/ZAP","top10":"A3","cwe":"CWE-147"},{"id":"7.11","wstg":"WSTG-INPV-11","name":"Testing for Code Injection","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/07-Input_Validation_Testing/11-Testing_for_Code_Injection","desc":"- Identify injection points where you can inject code into the application. \n- Check LFI with dot-dot-slash (../../), PHP Wrapper (php://filter/convert.base64-encode/resource).\n- Check RFI from malicious URL \n?page.php?file=http://attacker.com/malicious_page\n- Assess the injection severity.","tools":"Burpsuite/ZAP\nLiffy\nLFImap","top10":"A3","cwe":"CWE-22\nCWE-94\nCWE-95\nCWE-98\nCWE-829"},{"id":"7.12","wstg":"WSTG-INPV-12","name":"Testing for Command Injection","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/07-Input_Validation_Testing/12-Testing_for_Command_Injection","desc":"- Identify and assess the command injection points with special characters (i.e.: | ; & $ > < ' !)\nFor example: ?doc=Doc1.pdf+|+Dir c:\\","tools":"Burpsuite/ZAP Commix","top10":"A3","cwe":"CWE-77\nCWE-78"},{"id":"7.13","wstg":"WSTG-INPV-13","name":"Testing for Format String Injection","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/07-Input_Validation_Testing/13-Testing_for_Format_String_Injection","desc":"- Assess whether injecting format string conversion specifiers into user-controlled fields causes undesired behavior from the application.","tools":"Immunity Canvas\nSpike\nMSF","top10":"A3","cwe":"CWE-134"},{"id":"7.14","wstg":"WSTG-INPV-14","name":"Testing for Incubated Vulnerability","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/07-Input_Validation_Testing/14-Testing_for_Incubated_Vulnerability","desc":"- Identify injections that are stored and require a recall step to the stored injection. (i.e.: CSV Injection, Blind Stored XSS, File Upload)\n- Understand how a recall step could occur.\n- Set listeners or activate the recall step if possible.","tools":"Burpsuite/ZAP\nBeEF","top10":"A3","cwe":"CWE-79\nCWE-434\nCWE-1236"},{"id":"7.15","wstg":"WSTG-INPV-15","name":"Testing for HTTP Splitting Smuggling","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/07-Input_Validation_Testing/15-Testing_for_HTTP_Splitting_Smuggling","desc":"- Assess if the application is vulnerable to splitting, identifying what possible attacks are achievable.\n- Assess if the chain of communication is vulnerable to smuggling, identifying what possible attacks are achievable.","tools":"Burpsuite/ZAP","top10":"A3\nA4","cwe":"CWE-93\nCWE-113\nCWE-444"},{"id":"7.16","wstg":"WSTG-INPV-16","name":"Testing for HTTP Incoming Requests","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/07-Input_Validation_Testing/16-Testing_for_HTTP_Incoming_Requests","desc":"- Monitor all incoming and outgoing HTTP requests to the Web Server to inspect any suspicious requests.\n- Monitor HTTP traffic without changes of end user Browser proxy or client-side application.","tools":"Burpsuite/ZAP","top10":"NA","cwe":"NA"},{"id":"7.17","wstg":"WSTG-INPV-17","name":"Testing for Host Header Injection","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/07-Input_Validation_Testing/17-Testing_for_Host_Header_Injection","desc":"- Assess if the Host header is being parsed dynamically in the application.\n- Bypass security controls that rely on the header.","tools":"Burpsuite/ZAP\nNetcat","top10":"A4","cwe":"CWE-74\nCWE-116"},{"id":"7.18","wstg":"WSTG-INPV-18","name":"Testing for Server-side Template Injection","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/07-Input_Validation_Testing/18-Testing_for_Server-side_Template_Injection","desc":"- Detect template injection vulnerability points.\n- Identify the templating engine.\n- Build the exploit.","tools":"Burpsuite/ZAP\nTplmap","top10":"A4","cwe":"CWE-1336"},{"id":"7.19","wstg":"WSTG-INPV-19","name":"Testing for Server-Side Request Forgery","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/07-Input_Validation_Testing/19-Testing_for_Server-Side_Request_Forgery","desc":"- Identify SSRF injection points.\n- Test if the injection points are exploitable.\n- Asses the severity of the vulnerability.","tools":"Burpsuite/ZAP","top10":"A10","cwe":"CWE-918"},{"id":"7.20","wstg":"WSTG-INPV-20","name":"Testing for Mass Assignment","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/07-Input_Validation_Testing/20-Testing_for_Mass_Assignment","desc":"- Identify requests that modify objects\n- Assess if it is possible to modify fields never intended to be modified from outside","tools":"Burpsuite/ZAP","top10":"A4","cwe":"CWE-915"}]},{"sheet":"8","title":"8. Error Handling","items":[{"id":"8.1","wstg":"WSTG-ERRH-01","name":"Testing for Improper Error Handling","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/08-Testing_for_Error_Handling/01-Testing_For_Improper_Error_Handling","desc":"- Identify existing error output (i.e.: Random files/folders (40x)\n- Analyze the different output returned.","tools":"Burpsuite/ZAP","top10":"A5","cwe":"CWE-209\nCWE-210\nCWE-431\nCWE-497\nCWE-544\nCWE-550\nCWE-728"},{"id":"8.2","wstg":"WSTG-ERRH-02","name":"Testing for Stack Traces","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/08-Testing_for_Error_Handling/02-Testing_for_Stack_Traces","desc":"N/A, This content has been merged into: WSTG-ERRH-01","tools":"NA","top10":"NA","cwe":"NA"}]},{"sheet":"9","title":"9. Cryptography","items":[{"id":"9.1","wstg":"WSTG-CRYP-01","name":"Testing for Weak Transport Layer Security","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/09-Testing_for_Weak_Cryptography/01-Testing_for_Weak_Transport_Layer_Security","desc":"- Validate the server configuration (Identify weak ciphers/protocols (ie. RC4, BEAST, CRIME, POODLE)\n- Review the digital certificate's cryptographic strength and validity.\n- Ensure that the TLS security is not bypassable and is properly implemented across the application.","tools":"testssl.sh","top10":"A2\nA7","cwe":"CWE-295\nCWE-296\nCWE-297\nCWE-298\nCWE-319\nCWE-326\nCWE-327\nCWE-310\nCWE-757"},{"id":"9.2","wstg":"WSTG-CRYP-02","name":"Testing for Padding Oracle","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/09-Testing_for_Weak_Cryptography/02-Testing_for_Padding_Oracle","desc":"- Identify encrypted messages that rely on padding.\n- Attempt to break the padding of the encrypted messages and analyze the returned error messages for further analysis.","tools":"PadBuster\nPOET","top10":"A2","cwe":"CWE-326\nCWE-649"},{"id":"9.3","wstg":"WSTG-CRYP-03","name":"Testing for Sensitive Information Sent via Unencrypted Channels","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/09-Testing_for_Weak_Cryptography/03-Testing_for_Sensitive_Information_Sent_via_Unencrypted_Channels","desc":"- Identify sensitive information transmitted through the various channels.\n- Assess the privacy and security of the channels used.\n- Check sensitive data during the transmission:\n• Information used in authentication (e.g. Credentials, PINs, Session\nidentifiers, Tokens, Cookies…)\n• Information protected by laws, regulations or specific organizational\npolicy (e.g. Credit Cards, Customers data)","tools":"Burpsuite/ZAP","top10":"A2","cwe":"CWE-311\nCWE-319\nCWE-523"},{"id":"9.4","wstg":"WSTG-CRYP-04","name":"Testing for Weak Encryption","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/09-Testing_for_Weak_Cryptography/04-Testing_for_Weak_Encryption","desc":"- Provide a guideline for the identification weak encryption or hashing uses and implementations.","tools":"Testssl.sh\nNessus","top10":"A2","cwe":"CWE-261\nCWE-320\nCWE-321\nCWE-322\nCWE-323\nCWE-324\nCWE-325\nCWE-326\nCWE-327\nCWE-328\nCWE-329\nCWE-330\nCWE-331\nCWE-335\nCWE-336\nCWE-337\nCWE-338\nCWE-340\nCWE-347\nCWE-354\nCWE-759\nCWE-760\nCWE-780\nCWE-798\nCWE-916"}]},{"sheet":"10","title":"10. Business logic Testing","items":[{"id":"10.1","wstg":"WSTG-BUSL-01","name":"Test Business Logic Data Validation","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/10-Business_Logic_Testing/01-Test_Business_Logic_Data_Validation","desc":"- Identify data injection points.\n- Validate that all checks are occurring on the back end and can't be bypassed.\n- Attempt to break the format of the expected data and analyze how the application is handling it.","tools":"Burpsuite/ZAP","top10":"A4","cwe":"CWE-840"},{"id":"10.2","wstg":"WSTG-BUSL-02","name":"Test Ability to Forge Requests","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/10-Business_Logic_Testing/02-Test_Ability_to_Forge_Requests","desc":"- Review the project documentation looking for guessable, predictable, or hidden functionality of fields.\n- Insert logically valid data in order to bypass normal business logic workflow.","tools":"Burpsuite/ZAP","top10":"A4","cwe":"CWE-840"},{"id":"10.3","wstg":"WSTG-BUSL-03","name":"Test Integrity Checks","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/10-Business_Logic_Testing/03-Test_Integrity_Checks","desc":"- Review the project documentation for components of the system that move, store, or handle data.\n- Determine what type of data is logically acceptable by the component and what types the system should guard against.\n- Determine who should be allowed to modify or read that data in each component.\n- Attempt to insert, update, or delete data values used by each component that should not be allowed per the business logic workflow.","tools":"Burp Proxy","top10":"A4","cwe":"CWE-840\nCWE-472"},{"id":"10.4","wstg":"WSTG-BUSL-04","name":"Test for Process Timing","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/10-Business_Logic_Testing/04-Test_for_Process_Timing","desc":"- Review the project documentation for system functionality that may be impacted by time. Such as execution time or actions that\nhelp users predict a future outcome or allow one to circumvent\nany part of the business logic or workflow. For example, not\ncompleting transactions in an expected time.\n- Develop and execute the mis-use cases ensuring that attackers\ncan not gain an advantage based on any timing (Race Condition).","tools":"Burpsuite/ZAP","top10":"A4","cwe":"CWE-840\nCWE-362"},{"id":"10.5","wstg":"WSTG-BUSL-05","name":"Test Number of Times a Function Can Be Used Limits","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/10-Business_Logic_Testing/05-Test_Number_of_Times_a_Function_Can_Be_Used_Limits","desc":"- Identify functions that must set limits to the times they can be called.\n- Assess if there is a logical limit set on the functions and if it is properly validated.\n- For each of the functions and features found that should only be executed a single time or specified number of times during the business logic workflow, develop abuse/misuse cases that may allow a user to execute more than the allowable number of times.","tools":"Burpsuite/ZAP","top10":"A4\nA7","cwe":"CWE-799"},{"id":"10.6","wstg":"WSTG-BUSL-06","name":"Testing for the Circumvention of Work Flows","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/10-Business_Logic_Testing/06-Testing_for_the_Circumvention_of_Work_Flows","desc":"- Review the project documentation for methods to skip or go through steps in the application process in a different order from the intended business logic flow.\n- Develop a misuse case and try to circumvent every logic flow identified.","tools":"Burpsuite/ZAP","top10":"A4","cwe":"CWE-841"},{"id":"10.7","wstg":"WSTG-BUSL-07","name":"Test Defenses Against Application Misuse","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/10-Business_Logic_Testing/07-Test_Defenses_Against_Application_Misuse","desc":"- Generate notes from all tests conducted against the system.\n- Review which tests had a different functionality based on aggressive input.\n- Understand the defenses in place and verify if they are enough to protect the system against bypassing techniques.\n- Measures that might indicate the application has in-built self-defense:\n• Changed responses\n• Blocked requests\n• Actions that log a user out or lock their account","tools":"Burpsuite/ZAP","top10":"A4","cwe":"CWE-693"},{"id":"10.8","wstg":"WSTG-BUSL-08","name":"Test Upload of Unexpected File Types","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/10-Business_Logic_Testing/08-Test_Upload_of_Unexpected_File_Types","desc":"- Review the project documentation for file types that are rejected by the system.\n- Verify that the unwelcomed file types are rejected and handled safely. Also, check whether the website only check for \"Content-type\" or file extension.\n- Verify that file batch uploads are secure and do not allow any bypass against the set security measures.","tools":"Burpsuite/ZAP","top10":"A4","cwe":"CWE-434\nCWE-602"},{"id":"10.9","wstg":"WSTG-BUSL-09","name":"Test Upload of Malicious Files","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/10-Business_Logic_Testing/09-Test_Upload_of_Malicious_Files","desc":"- Identify the file upload functionality.\n- Review the project documentation to identify what file types are considered acceptable, and what types would be considered dangerous or malicious.\n- If documentation is not available then consider what would be appropriate based on the purpose of the application.\n- Determine how the uploaded files are processed.\n- Obtain or create a set of malicious files for testing.\n- Try to upload the malicious files to the application and determine whether it is accepted and processed.","tools":"Burpsuite/ZAP","top10":"A4","cwe":"CWE-434"},{"id":"10.10","wstg":"WSTG-BUSL-10","name":"Test Payment Functionality","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/10-Business_Logic_Testing/10-Test-Payment-Functionality","desc":"- Determine whether the business logic for the e-commerce functionality is robust.\n- Understand how the payment functionality works.\n- Determine whether the payment functionality is secure.","tools":"Burpsuite/ZAP","top10":"A4","cwe":"CWE-472\nCWE-602\nCWE-807"}]},{"sheet":"11","title":"11. Client Side Testing","items":[{"id":"11.1","wstg":"WSTG-CLNT-01","name":"Testing for DOM-Based Cross Site Scripting","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/11-Client-side_Testing/01-Testing_for_DOM-based_Cross_Site_Scripting","desc":"- Identify DOM sinks.\n- Build payloads that pertain to every sink type. \nFor example: #<script>alert('xss')<\/script>","tools":"Burpsuite/ZAP","top10":"A3","cwe":"CWE-79"},{"id":"11.2","wstg":"WSTG-CLNT-02","name":"Testing for JavaScript Execution","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/11-Client-side_Testing/02-Testing_for_JavaScript_Execution","desc":"- Identify sinks and possible JavaScript injection points.\nFor example: ?javascript:alert(1)","tools":"Burpsuite/ZAP","top10":"A3","cwe":"CWE-79"},{"id":"11.3","wstg":"WSTG-CLNT-03","name":"Testing for HTML Injection","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/11-Client-side_Testing/03-Testing_for_HTML_Injection","desc":"- Identify HTML injection points and assess the severity of the injected content.\nFor example: page.html?user=<img%20src='aaa'%20onerror=alert(1)>","tools":"Burpsuite/ZAP","top10":"A3","cwe":"CWE-80"},{"id":"11.4","wstg":"WSTG-CLNT-04","name":"Testing for Client-side URL Redirect","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/11-Client-side_Testing/04-Testing_for_Client-side_URL_Redirect","desc":"- Identify injection points that handle URLs or paths.\n- Assess the locations that the system could redirect to (Open Redirect).\nFor example: ?redirect=www.fake-target.site ","tools":"Burpsuite/ZAP","top10":"A4","cwe":"CWE-601"},{"id":"11.5","wstg":"WSTG-CLNT-05","name":"Testing for CSS Injection","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/11-Client-side_Testing/05-Testing_for_CSS_Injection","desc":"- Identify CSS injection points.\n- Assess the impact of the injection.","tools":"Burpsuite/ZAP","top10":"A3","cwe":"CWE-20"},{"id":"11.6","wstg":"WSTG-CLNT-06","name":"Testing for Client-side Resource Manipulation","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/11-Client-side_Testing/06-Testing_for_Client-side_Resource_Manipulation","desc":"- Identify sinks with weak input validation.\n- Assess the impact of the resource manipulation.\nFor example: www.victim.com/#http://evil.com/js.js","tools":"Burpsuite/ZAP","top10":"A3","cwe":"CWE-20"},{"id":"11.7","wstg":"WSTG-CLNT-07","name":"Testing Cross Origin Resource Sharing","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/11-Client-side_Testing/07-Testing_Cross_Origin_Resource_Sharing","desc":"- Identify endpoints that implement CORS.\n- Ensure that the CORS configuration is secure or harmless.","tools":"Burpsuite/ZAP","top10":"A5","cwe":"CWE-942"},{"id":"11.8","wstg":"WSTG-CLNT-08","name":"Testing for Cross Site Flashing","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/11-Client-side_Testing/08-Testing_for_Cross_Site_Flashing","desc":"- Decompile and analyze the application's code.\n- Assess sinks inputs and unsafe method usages.\nFor example: file.swf?lang=http://evil ","tools":"Flare\nFlasm\nSWF Intruder","top10":"A3","cwe":"CWE-79"},{"id":"11.9","wstg":"WSTG-CLNT-09","name":"Testing for Clickjacking","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/11-Client-side_Testing/09-Testing_for_Clickjacking","desc":"- Understand security measures in place.\n- Discover if a website is vulnerable by loading into an iframe, create simple web page that includes a frame containing the target.\n- Assess how strict the security measures are and if they are bypassable.","tools":"Burpsuite/ZAP","top10":"A5","cwe":"CWE-1021"},{"id":"11.10","wstg":"WSTG-CLNT-10","name":"Testing WebSockets","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/11-Client-side_Testing/10-Testing_WebSockets","desc":"- Identify the usage of WebSockets by inspecting ws:// or wss:// URI scheme.\n- Assess its implementation by using the same tests on normal HTTP channels.","tools":"Burpsuite/ZAP","top10":"A2\nA3","cwe":"CWE-319\nCWE-1347"},{"id":"11.11","wstg":"WSTG-CLNT-11","name":"Testing Web Messaging","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/11-Client-side_Testing/11-Testing_Web_Messaging","desc":"- Assess the security of the message's origin.\n- Validate that it's using safe methods and validating its input.","tools":"Burpsuite/ZAP","top10":"A5","cwe":"CWE-1020"},{"id":"11.12","wstg":"WSTG-CLNT-12","name":"Testing Browser Storage","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/11-Client-side_Testing/12-Testing_Browser_Storage","desc":"- Determine whether the website is storing sensitive data in client-side storage.\n- The code handling of the storage objects should be examined for possibilities of injection attacks, such as utilizing unvalidated input or vulnerable libraries.","tools":"Burpsuite/ZAP","top10":"A1\nA4","cwe":"CWE-312\nCWE-313\nCWE-315\nCWE-922"},{"id":"11.13","wstg":"WSTG-CLNT-13","name":"Testing for Cross Site Script Inclusion","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/11-Client-side_Testing/13-Testing_for_Cross_Site_Script_Inclusion","desc":"- Locate sensitive data across the system.\n- Assess the leakage of sensitive data through various techniques.","tools":"Burpsuite/ZAP","top10":"A3","cwe":"CWE-79"},{"id":"11.14","wstg":"WSTG-CLNT-14","name":"Testing for Reverse Tabnabbing","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/11-Client-side_Testing/14-Testing_for_Reverse_Tabnabbing","desc":"N/A","tools":"Burpsuite/ZAP","top10":"A3","cwe":"CWE-1022"}]},{"sheet":"12","title":"12. API Testing","items":[{"id":"12.1","wstg":"WSTG-APIT-01","name":"Testing GraphQL","url":"https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/12-API_Testing/01-Testing_GraphQL","desc":"- Assess that a secure and production-ready configuration is deployed.\n- Validate all input fields against generic attacks.\n- Ensure that proper access controls are applied.","tools":"Burpsuite/ZAP\nGraphSQL Raider","top10":"A3","cwe":"CWE-1347"},{"id":"12.2","wstg":"API2:2023","name":"Testing for Broken Authentication","url":"https://owasp.org/API-Security/editions/2023/en/0xa2-broken-authentication/","desc":"- Identify every authentication mechanism exposed by the API (API keys, OAuth2, JWT, Basic Auth, mTLS) and assess each independently.\n- Test token issuance, validation, expiration, refresh and revocation, and check whether tokens can be forged, reused or replayed.\n- Look for weak credential policies, missing lockout/rate limiting on login and token endpoints, and credentials leaked in code, configs or client apps.","tools":"Burpsuite/ZAP\njwt_tool\nPostman\nHydra","top10":"NA","cwe":"CWE-287\nCWE-306\nCWE-521\nCWE-798","added":true,"addedLabel":"OWASP API Top 10 ’23"},{"id":"12.3","wstg":"API3:2023","name":"Testing for Broken Object Property Level Authorization","url":"https://owasp.org/API-Security/editions/2023/en/0xa3-broken-object-property-level-authorization/","desc":"- Identify which object properties each endpoint returns and whether sensitive properties are exposed to users who should not see them (excessive data exposure).\n- Attempt mass assignment by adding or changing properties not exposed in the client (e.g. role, isAdmin, price, balance) and submitting them anyway.\n- Compare the full data model against what each role is actually permitted to read and write.","tools":"Burpsuite/ZAP\nPostman\nArjun","top10":"NA","cwe":"CWE-213\nCWE-915","added":true,"addedLabel":"OWASP API Top 10 ’23"},{"id":"12.4","wstg":"API4:2023","name":"Testing for Unrestricted Resource Consumption","url":"https://owasp.org/API-Security/editions/2023/en/0xa4-unrestricted-resource-consumption/","desc":"- Assess whether the API enforces limits on request size, execution time, pagination size and number of records returned per call.\n- Test rate limiting and quota enforcement per client, IP and API key, including on costly operations such as uploads, exports and bulk/batch endpoints.\n- Evaluate resource-intensive operations (e.g. deeply nested GraphQL queries, large file conversions) for abuse that could exhaust CPU, memory or cost (API4 covers the old \"Lack of Resources and Rate Limiting\").","tools":"Burpsuite/ZAP\nffuf\nCustom scripts","top10":"NA","cwe":"CWE-400\nCWE-770\nCWE-799","added":true,"addedLabel":"OWASP API Top 10 ’23"},{"id":"12.5","wstg":"API5:2023","name":"Testing for Broken Function Level Authorization","url":"https://owasp.org/API-Security/editions/2023/en/0xa5-broken-function-level-authorization/","desc":"- Map every function/endpoint reachable by the API, including administrative and internal-only ones, for each defined role.\n- Attempt to call higher-privilege functions (e.g. admin or write endpoints) using a lower-privilege or unauthenticated token.\n- Test for inconsistent authorization enforcement between similar HTTP methods, endpoints or API versions (e.g. GET is checked but DELETE is not).","tools":"Burpsuite/ZAP\nPostman","top10":"NA","cwe":"CWE-285\nCWE-862\nCWE-863","added":true,"addedLabel":"OWASP API Top 10 ’23"},{"id":"12.6","wstg":"API6:2023","name":"Testing for Unrestricted Access to Sensitive Business Flows","url":"https://owasp.org/API-Security/editions/2023/en/0xa6-unrestricted-access-to-sensitive-business-flows/","desc":"- Identify business flows that could harm the business if used excessively or automated at scale (bulk purchasing, seat/ticket reservation, coupon redemption, posting or messaging).\n- Determine whether the flow can be scripted or automated without friction (no CAPTCHA, device fingerprinting, human-pacing or rate limiting).\n- Assess whether abusing the flow could deny inventory or service to legitimate users, or leak information useful to a competitor.","tools":"Burpsuite/ZAP\nCustom scripts","top10":"NA","cwe":"CWE-799","added":true,"addedLabel":"OWASP API Top 10 ’23"},{"id":"12.7","wstg":"API7:2023","name":"Testing for Server Side Request Forgery (API)","url":"https://owasp.org/API-Security/editions/2023/en/0xa7-server-side-request-forgery/","desc":"- Identify API parameters that take a URL, hostname, file path or similar reference the server uses to fetch a remote resource (webhooks, file import by URL, PDF/image rendering, SSO/OAuth callback or redirect URIs).\n- Attempt to redirect the request to internal/private addresses, cloud metadata endpoints (e.g. 169.254.169.254), or alternative schemes and ports.\n- Check whether API responses leak data retrieved from the forged destination, confirming a blind or non-blind SSRF.","tools":"Burpsuite/ZAP\nBurp Collaborator/interactsh","top10":"NA","cwe":"CWE-918","added":true,"addedLabel":"OWASP API Top 10 ’23"},{"id":"12.8","wstg":"API8:2023","name":"Testing for Security Misconfiguration (API)","url":"https://owasp.org/API-Security/editions/2023/en/0xa8-security-misconfiguration/","desc":"- Review API-specific configuration: CORS policy, API-relevant HTTP security headers, verbose error/stack-trace responses, and any debug or trace endpoints left enabled.\n- Confirm TLS is enforced on every endpoint and that unused or unsafe HTTP methods are disabled.\n- Check that API gateways, developer portals and management consoles are hardened, patched and not left on default credentials.","tools":"Browser\nBurpsuite/ZAP\ntestssl.sh","top10":"NA","cwe":"CWE-2\nCWE-16\nCWE-209\nCWE-1352","added":true,"addedLabel":"OWASP API Top 10 ’23"},{"id":"12.9","wstg":"API9:2023","name":"Testing for Improper Inventory Management","url":"https://owasp.org/API-Security/editions/2023/en/0xa9-improper-inventory-management/","desc":"- Enumerate all API hosts and environments in use (production, staging, test, partner, old versions) and confirm each is documented, necessary and inventoried.\n- Check for deprecated, beta or \"shadow\" API versions that are still reachable, especially ones lacking current security controls.\n- Verify that third-party and partner integrations are documented and reviewed, and that the published OpenAPI/Swagger specification matches actual deployed behaviour.","tools":"Browser\ndnsrecon\nNmap\nBurpsuite/ZAP","top10":"NA","cwe":"CWE-1059","added":true,"addedLabel":"OWASP API Top 10 ’23"},{"id":"12.10","wstg":"API10:2023","name":"Testing for Unsafe Consumption of APIs","url":"https://owasp.org/API-Security/editions/2023/en/0xaa-unsafe-consumption-of-apis/","desc":"- Identify every third-party or back-end API the application consumes, and how much trust is implicitly placed in its responses.\n- Verify that data received from integrated APIs is validated and sanitized before use, to the same standard as user-supplied input.\n- Confirm integrations use TLS, follow redirects only to an allow-list of known locations, and that credentials for these integrations are stored and rotated securely.","tools":"Burpsuite/ZAP\nPostman","top10":"NA","cwe":"CWE-20","added":true,"addedLabel":"OWASP API Top 10 ’23"}],"note":"The original WSTG only covers GraphQL here (12.1). Items 12.2–12.10 extend this section with the full OWASP API Security Top 10 (2023), the dedicated checklist for REST/GraphQL API-specific risks."}],"cwe":[{"group":"WSTG - Information Gathering","cwes":["CWE-200 Exposure of Sensitive Information to an Unauthorized Actor","CWE-540 Inclusion of Sensitive Information in Source Code","CWE-756 Missing Custom Error Page","CWE-1104 Use of Unmaintained Third Party Components","CWE-1352 Vulnerable and Outdated Components"]},{"group":"WSTG - Configuration and Deploy Management Testing","cwes":["CWE-13 ASP.NET Misconfiguration: Password in Configuration File","CWE-117 Improper Output Neutralization for Logs","CWE-200 Exposure of Sensitive Information to an Unauthorized Actor","CWE-201 Exposure of Sensitive Information Through Sent Data","CWE-223 Omission of Security-relevant Information","CWE-264 Permissions, Privileges, and Access Controls (should no longer be used)","CWE-284 Improper Access Control","CWE-419 Unprotected Primary Channel","CWE-425 Direct Request ('Forced Browsing')","CWE-436 Interpretation Conflict","CWE-489 Active Debug Code","CWE-523 Unprotected Transport of Credentials","CWE-531 Inclusion of Sensitive Information in Test Code","CWE-532 Insertion of Sensitive Information into Log File","CWE-538 Insertion of Sensitive Information into Externally-Accessible File or Directory","CWE-548 Exposure of Information Through Directory Listing","CWE-552 Files or Directories Accessible to External Parties","CWE-650 Trusting HTTP Permission Methods on the Server Side","CWE-651 Exposure of WSDL File Containing Sensitive Information","CWE-673 External Influence of Sphere Definition","CWE-732 Incorrect Permission Assignment for Critical Resource","CWE-749 Exposed Dangerous Method or Function","CWE-778 Insufficient Logging","CWE-942 Permissive Cross-domain Policy with Untrusted Domains","CWE-1021 Improper Restriction of Rendered UI Layers or Frames","CWE1349 Security Misconfiguration","CWE-1352 Vulnerable and Outdated Components"]},{"group":"WSTG - Identity Management Testing","cwes":["CWE-204 Observable Response Discrepancy","CWE-266 Incorrect Privilege Assignment","CWE-269 Improper Privilege Management","CWE-280 Improper Handling of Insufficient Permissions or Privileges","CWE-419 Unprotected Primary Channel"]},{"group":"WSTG - Authentication Testing","cwes":["CWE-287 Improper Authentication","CWE-288 Authentication Bypass Using an Alternate Path or Channel","CWE-290 Authentication Bypass by Spoofing","CWE-294 Authentication Bypass by Capture-replay","CWE-302 Authentication Bypass by Assumed-Immutable Data","CWE-304 Missing Critical Step in Authentication","CWE-306 Missing Authentication for Critical Function","CWE-307 Improper Restriction of Excessive Authentication Attempts","CWE-308 Use of Single-factor Authentication","CWE-315 Cleartext Storage of Sensitive Information in a Cookie","CWE-425 Direct Request ('Forced Browsing')","CWE-521 Weak Password Requirements","CWE-522 Insufficiently Protected Credentials","CWE-524 Use of Cache Containing Sensitive Information","CWE-525 Use of Web Browser Cache Containing Sensitive Information","CWE-620 Unverified Password Change","CWE-640 Weak Password Recovery Mechanism for Forgotten Password","CWE-804 Guessable CAPTCHA","CWE-1391 Use of Weak Credentials","CWE-1392 Use of Default Credentials"]},{"group":"WSTG - Authorization Testing","cwes":["CWE-22 Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')","CWE-23 Relative Path Traversal","CWE-35 Path Traversal: '.../...//'","CWE-269 Improper Privilege Management","CWE-285 Improper Authorization","CWE-290 Authentication Bypass by Spoofing","CWE-345 Insufficient Verification of Data Authenticity","CWE-639 Authorization Bypass Through User-Controlled Key","CWE-732 Incorrect Permission Assignment for Critical Resource","CWE-798 Use of Hard-coded Credentials","CWE-829 Inclusion of Functionality from Untrusted Control Sphere","CWE-862 Missing Authorization","CWE-863 Incorrect Authorization"]},{"group":"WSTG - Session Management Testing","cwes":["CWE-16 Configuration","CWE-315 Cleartext Storage of Sensitive Information in a Cookie","CWE-330 Use of Insufficiently Random Values","CWE-345 Insufficient Verification of Data Authenticity","CWE-352 Cross-Site Request Forgery (CSRF)","CWE-384 Session Fixation","CWE-523 Unprotected Transport of Credentials","CWE-539 Use of Persistent Cookies Containing Sensitive Information","CWE-598 Use of GET Request Method With Sensitive Query Strings","CWE-613 Insufficient Session Expiration","CWE-614 Sensitive Cookie in HTTPS Session Without 'Secure' Attribute","CWE-694 Use of Multiple Resources with Duplicate Identifier","CWE-757 Selection of Less-Secure Algorithm During Negotiation ('Algorithm Downgrade')","CWE-798 Use of Hard-coded Credentials","CWE-841 Improper Enforcement of Behavioral Workflow","CWE-1004 Sensitive Cookie Without 'HttpOnly' Flag","CWE-1275 Sensitive Cookie with Improper SameSite Attribute"]},{"group":"WSTG - Data Validation Testing","cwes":["CWE-22 Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')","CWE-74 Improper Neutralization of Special Elements in Output Used by a Downstream Component ('Injection')","CWE-77 Improper Neutralization of Special Elements used in a Command ('Command Injection')","CWE-78 Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')","CWE-79 Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')","CWE-89 Improper Neutralization of Special Elements used in an SQL Command ('SQL Injection')","CWE-90 Improper Neutralization of Special Elements used in an LDAP Query ('LDAP Injection')","CWE-91 XML Injection (aka Blind XPath Injection)","CWE-93 Improper Neutralization of CRLF Sequences ('CRLF Injection')","CWE-94 Improper Control of Generation of Code ('Code Injection')","CWE-95 Improper Neutralization of Directives in Dynamically Evaluated Code ('Eval Injection')","CWE-97 Improper Neutralization of Server-Side Includes (SSI) Within a Web Page","CWE-98 Improper Control of Filename for Include/Require Statement in PHP Program ('PHP Remote File Inclusion')","CWE-113 Improper Neutralization of CRLF Sequences in HTTP Headers ('HTTP Response Splitting')","CWE-116 Improper Encoding or Escaping of Output","CWE-134 Use of Externally-Controlled Format String","CWE-147 Improper Neutralization of Input Terminators","CWE-235 Improper Handling of Extra Parameters","CWE-434 Unrestricted Upload of File with Dangerous Type","CWE-444 Inconsistent Interpretation of HTTP Requests ('HTTP Request Smuggling')","CWE-611 Improper Restriction of XML External Entity Reference","CWE-643 Improper Neutralization of Data within XPath Expressions ('XPath Injection')","CWE-652 Improper Neutralization of Data within XQuery Expressions ('XQuery Injection')","CWE-829 Inclusion of Functionality from Untrusted Control Sphere","CWE-915 Improperly Controlled Modification of Dynamically-Determined Object Attributes","CWE-918 Server-Side Request Forgery (SSRF)","CWE-1236 Improper Neutralization of Formula Elements in a CSV File","CWE-1336 Improper Neutralization of Special Elements Used in a Template Engine"]},{"group":"WSTG - Error Handling","cwes":["CWE-209 Generation of Error Message Containing Sensitive Information","CWE-210 Self-generated Error Message Containing Sensitive Information","CWE-431 Missing Handler","CWE-497 Exposure of Sensitive System Information to an Unauthorized Control Sphere","CWE-544 Missing Standardized Error Handling Mechanism","CWE-550 Server-generated Error Message Containing Sensitive Information","CWE-728 Improper Error Handling"]},{"group":"WSTG - Cryptography","cwes":["CWE-261 Weak Encoding for Password","CWE-295 Improper Certificate Validation","CWE-296 Improper Following of a Certificate's Chain of Trust","CWE-297 Improper Validation of Certificate with Host Mismatch","CWE-298 Improper Validation of Certificate Expiration","CWE-310 Cryptographic Issues","CWE-311 Missing Encryption of Sensitive Data","CWE-319 Cleartext Transmission of Sensitive Information","CWE-320 Key Management Errors","CWE-321 Use of Hard-coded Cryptographic Key","CWE-322 Key Exchange without Entity Authentication","CWE-323 Reusing a Nonce, Key Pair in Encryption","CWE-324 Use of a Key Past its Expiration Date","CWE-325 Missing Cryptographic Step","CWE-326 Inadequate Encryption Strength","CWE-327 Use of a Broken or Risky Cryptographic Algorithm","CWE-328 Reversible One-Way Hash","CWE-329 Not Using a Random IV with CBC Mode","CWE-330 Use of Insufficiently Random Values","CWE-331 Insufficient Entropy","CWE-335 Incorrect Usage of Seeds in Pseudo-Random Number Generator(PRNG)","CWE-336 Same Seed in Pseudo-Random Number Generator (PRNG)","CWE-337 Predictable Seed in Pseudo-Random Number Generator (PRNG)","CWE-338 Use of Cryptographically Weak Pseudo-Random Number Generator(PRNG)","CWE-340 Generation of Predictable Numbers or Identifiers","CWE-347 Improper Verification of Cryptographic Signature","CWE-354 Improper Validation of Integrity Check Value","CWE-523 Unprotected Transport of Credentials","CWE-649 Reliance on Obfuscation or Encryption of Security-Relevant Inputs without Integrity Checking","CWE-757 Selection of Less-Secure Algorithm During Negotiation ('Algorithm Downgrade')","CWE-759 Use of a One-Way Hash without a Salt","CWE-760 Use of a One-Way Hash with a Predictable Salt","CWE-780 Use of RSA Algorithm without OAEP","CWE-798 Use of Hard-coded Credentials","CWE-916 Use of Password Hash With Insufficient Computational Effort"]},{"group":"WSTG - Business logic Testing","cwes":["CWE-362 Concurrent Execution using Shared Resource with Improper Synchronization ('Race Condition')","CWE-434 Unrestricted Upload of File with Dangerous Type","CWE-472 External Control of Assumed-Immutable Web Parameter","CWE-602 Client-Side Enforcement of Server-Side Security","CWE-693 Protection Mechanism Failure","CWE-799 Improper Control of Interaction Frequency","CWE-807 Reliance on Untrusted Inputs in a Security Decision","CWE-840 Business Logic Errors","CWE-841 Improper Enforcement of Behavioral Workflow"]},{"group":"WSTG - Client Side Testing","cwes":["CWE-20 Improper Input Validation","CWE-79 Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')","CWE-80 Improper Neutralization of Script-Related HTML Tags in a Web Page (Basic XSS)","CWE-312 Cleartext Storage of Sensitive Information","CWE-313 Cleartext Storage in a File or on Disk","CWE-315 Cleartext Storage of Sensitive Information in a Cookie","CWE-319 Cleartext Transmission of Sensitive Information","CWE-601 URL Redirection to Untrusted Site ('Open Redirect')","CWE-922 Insecure Storage of Sensitive Information","CWE-942 Permissive Cross-domain Policy with Untrusted Domains","CWE-1020 Verify Message Integrity","CWE-1021 Improper Restriction of Rendered UI Layers or Frames","CWE-1022 Use of Web Link to Untrusted Target with window.opener Access","CWE-1347 Injection"]},{"group":"WSTG - API Testing","cwes":["CWE-1347 Injection"]}],"refs":{"Skills required":[["Not Applicable [0]",0],["No technical skills [1]",1],["Some technical skills [3]",3],["Advanced computer user [5]",5],["Network and programming skills [6]",6],["Security penetration skills [9]",9]],"Loss of confidentiality":[["Not Applicable [0]",0],["Minimal non-sensitive data disclosed [2]",2],["Extensive non-sensitive data disclosed [6]",6],["Extensive critical data disclosed [7]",7],["All data disclosed [9]",9]],"Motive":[["Not Applicable [0]",0],["Low or no reward [1]",1],["Possible reward [4]",4],["High reward [9]",9]],"Loss of Integrity":[["Not Applicable [0]",0],["Minimal slightly corrupt data [1]",1],["Minimal seriously corrupt data [3]",3],["Extensive slightly corrupt data [5]",5],["Extensive seriously corrupt data [7]",7],["All data totally corrupt [9]",9]],"Opportunity":[["Full access or expensive resources required [0]",0],["Special access or resources required [4]",4],["Some access or resources required [7]",7],["No access or resources required [9]",9]],"Loss of Availability":[["Not Applicable [0]",0],["Minimal secondary services interrupted [1]",1],["Minimal primary services interrupted [5]",5],["Extensive primary services interrupted [7]",7],["All services completely lost [9]",9]],"Population Size":[["Not Applicable [0]",0],["System Administrators [2]",2],["Intranet Users [4]",4],["Partners [5]",5],["Authenticated users [6]",6],["Anonymous Internet users [9]",9]],"Loss of Accountability":[["Not Applicable [0]",0],["Attack fully traceable to individual [1]",1],["Attack possibly traceable to individual [7]",7],["Attack completely anonymous [9]",9]],"Easy of Discovery":[["Not Applicable [0]",0],["Practically impossible [1]",1],["Difficult [3]",3],["Easy [7]",7],["Automated tools available [9]",9]],"Financial damage":[["Not Applicable [0]",0],["Damage costs less than to fix the issue [1]",1],["Minor effect on annual profit [3]",3],["Significant effect on annual profit [7]",7],["Backruptcy [9]",9]],"Ease of Exploit":[["Not Applicable [0]",0],["Theoretical [1]",1],["Difficult [3]",3],["Easy [5]",5],["Automated tools available [9]",9]],"Reputation damage":[["Not Applicable [0]",0],["Minimal damage [1]",1],["Loss of major accounts [4]",4],["Loss of goodwill [5]",5],["Brand damage [9]",9]],"Awareness":[["Not Applicable [0]",0],["Unknown [1]",1],["Hidden [4]",4],["Obvious [6]",6],["Public knowledge [9]",9]],"Non-Compliance":[["Not Applicable [0]",0],["Minor violation [2]",2],["Clear violation [5]",5],["High profile violation [7]",7]],"Intrusion Detection":[["Not Applicable [0]",0],["Active detection in application [1]",1],["Logged and reviewed [3]",3],["Logged without review [8]",8],["Not logged [9]",9]],"Privacy violation":[["Not Applicable [0]",0],["One individual [3]",3],["Hundreds of people [5]",5],["Thousands of people [7]",7],["Millions of people [9]",9]]},"comments":{"Skills required":"How technically skilled is this group of threat agents?","Loss of confidentiality":"How much data could be disclosed and how sensitive is it?","Motive":"How motivated is this group of threat agents to find and exploit this vulnerability?","Loss of Integrity":"How much data could be corrupted and how damaged is it?","Opportunity":"What resources and opportunities are required for this group of threat agents to find and exploit this vulnerability?","Loss of Availability":"How much service could be lost and how vital is it?","Population Size":"How large is this group of threat agents?","Loss of Accountability":"Are the threat agents' actions traceable to an individual?","Easy of Discovery":"How easy is it for this group of threat agents to discover this vulnerability?","Financial damage":"How much financial damage will result from an exploit?","Ease of Exploit":"How easy is it for this group of threat agents to actually exploit this vulnerability?","Reputation damage":"Would an exploit result in reputation damage that would harm the business?","Awareness":"How well known is this vulnerability to this group of threat agents?","Non-Compliance":"How much exposure does non-compliance introduce?","Intrusion Detection":"How likely is an exploit to be detected?","Privacy violation":"How much personally identifiable information could be disclosed?"}};
+const D=DATA, K='wstg-hunt-v2', DEF={c:0, st:'Not started', r:'', a:'', n:''};
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const lines=s=>String(s||'').split('\n').map(x=>x.trim()).filter(Boolean);
+const ID=w=>'#'+CSS.escape(w);
+
+function toast(msg) {
+  const t = $('#toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._tm);
+  t._tm = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+let mem = false;
+function load() {
+  try {
+    let j = localStorage.getItem(K);
+    if (!j) j = localStorage.getItem('wstg-hunt-v1');
+    if (j) return JSON.parse(j);
+  } catch(e) {
+    mem = true;
+  }
+  return null;
+}
+
+let S = load();
+function sanitizeState() {
+  if (!S || typeof S !== 'object' || !S.p || typeof S.p !== 'object' || Object.keys(S.p).length === 0) {
+    S = { cur: 'p1', tab: 'list', theme: '', p: { p1: { name: 'Primary Target (Production)', t: {}, issues: [], risk: {} } } };
+  } else {
+    if (!S.cur || !S.p[S.cur]) S.cur = Object.keys(S.p)[0];
+    if (!S.tab) S.tab = 'list';
+    Object.keys(S.p).forEach(k => {
+      const proj = S.p[k];
+      if (!proj.t) proj.t = {};
+      if (!Array.isArray(proj.issues)) proj.issues = [];
+      if (!proj.risk) proj.risk = {};
+    });
+  }
+}
+sanitizeState();
+
+const P = () => S.p[S.cur];
+const g = w => P().t[w] || DEF;
+const wr = w => P().t[w] || (P().t[w] = { ...DEF });
+
+function flush() {
+  try {
+    localStorage.setItem(K, JSON.stringify(S));
+    $('#stamp').textContent = 'Saved at ' + new Date().toLocaleTimeString();
+  } catch(e) {
+    mem = true;
+    $('#warn').hidden = false;
+    $('#stamp').textContent = 'Not saved (storage full/blocked)';
+  }
+}
+let tm;
+function save() {
+  clearTimeout(tm);
+  tm = setTimeout(flush, 150);
+}
+
+addEventListener('pagehide', flush);
+document.addEventListener('visibilitychange', () => { if (document.hidden) flush(); });
+try { navigator.storage && navigator.storage.persist && navigator.storage.persist(); } catch(e) {}
+$('#warn').hidden = !mem;
+
+const CAT = D.cats, ALL = [], BY = {};
+CAT.forEach((c, k) => c.items.forEach(i => {
+  i.ci = k;
+  ALL.push(i);
+  BY[i.wstg] = i;
+  i.hay = [i.id, i.wstg, i.name, i.desc, i.tools, i.top10, i.cwe].join(' ').toLowerCase();
+}));
+
+const CW = {};
+D.cwe.forEach(gp => gp.cwes.forEach(s => {
+  const m = s.match(/^CWE-?(\d+)\s*(.*)/);
+  if (m && !CW[m[1]]) CW[m[1]] = m[2];
+}));
+
+const T10 = {
+  A1: 'A01:2021 â€” Broken Access Control',
+  A2: 'A02:2021 â€” Cryptographic Failures',
+  A3: 'A03:2021 â€” Injection',
+  A4: 'A04:2021 â€” Insecure Design',
+  A5: 'A05:2021 â€” Security Misconfiguration',
+  A6: 'A06:2021 â€” Vulnerable & Outdated Components',
+  A7: 'A07:2021 â€” Identification & Authentication Failures',
+  A8: 'A08:2021 â€” Software & Data Integrity Failures',
+  A9: 'A09:2021 â€” Security Logging & Monitoring Failures',
+  A10: 'A10:2021 â€” Server-Side Request Forgery (SSRF)'
+};
+
+function bullets(s) {
+  const o = [];
+  lines(s).forEach(l => {
+    if (/^-\s/.test(l) || !o.length) o.push(l.replace(/^-\s*/, ''));
+    else o[o.length - 1] += '\n' + l;
+  });
+  return '<ul>' + o.map(x => '<li>' + esc(x).replace(/\n/g, '<br>') + '</li>').join('') + '</ul>';
+}
+
+const opts = (a, v) => a.map(x => `<option${x === v ? ' selected' : ''}>${esc(x)}</option>`).join('');
+
+function card(i) {
+  const t10 = lines(i.top10).filter(x => x !== 'NA').map(x => `<span class="chip" title="${esc(T10[x] || x)}">${esc(x)}</span>`).join('');
+  const merged = /^N\/A/.test(i.desc);
+  const addedTag = i.added ? `<span class="tag add">${esc(i.addedLabel || 'Extended')}</span>` : '';
+  const cwes = lines(i.cwe).map(x => {
+    const m = x.match(/CWE-?(\d+)/);
+    return m ? `<p class="cw"><a href="https://cwe.mitre.org/data/definitions/${m[1]}.html" target="_blank" rel="noopener">CWE-${m[1]}</a> ${esc(CW[m[1]] || '')}</p>` : `<p class="cw">${esc(x)}</p>`;
+  }).join('') || '<span style="color:var(--mu)">N/A</span>';
+  const tools = lines(i.tools).map(x => `<span class="tool">${esc(x)}</span>`).join('') || '<span style="color:var(--mu)">N/A</span>';
+
+  return `
+<article class="t" id="${i.wstg}" data-w="${i.wstg}">
+  <div class="hd">
+    <input type="checkbox" class="ck" aria-label="Mark ${i.wstg} complete">
+    <div class="ti">
+      <span class="wid">${i.wstg}</span>
+      ${i.url ? `<a class="nm" href="${esc(i.url)}" target="_blank" rel="noopener" title="Open official OWASP guide">${esc(i.name)} â†—</a>` : `<span class="nm">${esc(i.name)}</span>`}
+      ${merged ? '<span class="tag">Merged</span>' : ''}
+      ${addedTag}
+    </div>
+    <span>${t10}</span>
+    <span class="has-note" style="display:none">ðŸ“ Note</span>
+    <span class="bd"></span>
+    <button class="b sm ex" type="button" aria-expanded="false">Details</button>
+  </div>
+  <div class="det">
+    <div class="cols">
+      <section><h4>Testing Objectives</h4>${bullets(i.desc)}</section>
+      <section><h4>Recommended Tools</h4><div>${tools}</div></section>
+      <section><h4>Related CWE</h4><div>${cwes}</div></section>
+    </div>
+    <div class="fl">
+      <label>Testing Status
+        <select class="f-st">
+          ${opts(['Not started', 'In progress', 'Done'])}
+        </select>
+      </label>
+      <label>Test Result
+        <select class="f-r">
+          <option value="">Not set</option>
+          <option>Pass</option>
+          <option>Issue</option>
+          <option>N/A</option>
+        </select>
+      </label>
+      <label class="wide">Affected Item / Endpoint / Parameter
+        <input class="f-a" placeholder="e.g. /api/v1/auth/login or &quot;redirect_url&quot; parameter">
+      </label>
+      <label class="wide">Observations, PoC Payloads &amp; Notes
+        <textarea class="f-n" rows="3" placeholder="Enter test observations, HTTP requests, response headers, payloads..."></textarea>
+      </label>
+      <div class="fl-actions">
+        <button class="b pri lg" type="button">âš ï¸ Log as Vulnerability</button>
+      </div>
+    </div>
+  </div>
+</article>`;
+}
+
+function build() {
+  $('#nav').innerHTML = CAT.map((c, k) => `<a href="#cat${k}" data-ci="${k}"><span class="nav-title">${esc(c.title)}</span><span id="nc${k}"></span></a>`).join('');
+  
+  $('#list').innerHTML = CAT.map((c, k) => `
+    <section class="cat" id="cat${k}">
+      <div class="ch">
+        <button class="cl" type="button" aria-expanded="true">
+          <span class="cl-arrow">â–¾</span>
+          <h2>${esc(c.title)}</h2>
+        </button>
+        <span class="cnt" id="sc${k}"></span>
+        <button class="b sm" type="button" data-act="mark-pass" data-k="${k}">Mark rest Pass</button>
+        <button class="b sm clr" type="button" data-k="${k}">Clear section</button>
+      </div>
+      ${c.note ? `<p class="catnote">${esc(c.note)}</p>` : ''}
+      <div class="cbody">${c.items.map(card).join('')}</div>
+    </section>
+  `).join('');
+
+  $('#map').innerHTML = CAT.map((c, k) => `
+    <div class="mg">
+      <span class="ml">${k + 1}</span>
+      ${c.items.map(i => `<button class="mc" id="m-${i.wstg}" data-w="${i.wstg}" title="${i.wstg}: ${esc(i.name)}" aria-label="${i.wstg} ${esc(i.name)}"></button>`).join('')}
+    </div>
+  `).join('');
+
+  buildCWE();
+}
+
+function buildCWE() {
+  $('#cwe-content').innerHTML = D.cwe.map(gp => `
+    <div class="cwe-group">
+      <h3>${esc(gp.group)}</h3>
+      <ul>
+        ${gp.cwes.map(s => {
+          const m = s.match(/^CWE-?(\d+)\s*(.*)/);
+          return m ? `<li><a href="https://cwe.mitre.org/data/definitions/${m[1]}.html" target="_blank" rel="noopener">CWE-${m[1]}</a> ${esc(m[2])}</li>` : `<li>${esc(s)}</li>`;
+        }).join('')}
+      </ul>
+    </div>
+  `).join('');
+}
+
+function upd(w) {
+  const s = g(w), el = $(ID(w));
+  if (!el) return;
+  el.classList.toggle('done', !!s.c);
+  el.classList.toggle('wip', s.st === 'In progress');
+  el.dataset.r = s.r;
+
+  const ck = $('.ck', el);
+  if (ck) ck.checked = !!s.c;
+  
+  const bd = $('.bd', el);
+  if (bd) bd.textContent = s.r || (s.st === 'In progress' ? 'IN PROGRESS' : '');
+
+  const hn = $('.has-note', el);
+  if (hn) hn.style.display = (s.a || s.n) ? 'inline-block' : 'none';
+
+  const set = (q, v) => {
+    const e = $(q, el);
+    if (e && e !== document.activeElement) e.value = v;
+  };
+  set('.f-st', s.st);
+  set('.f-r', s.r);
+  set('.f-a', s.a);
+  set('.f-n', s.n);
+
+  const mb = $('#m-' + CSS.escape(w));
+  if (mb) {
+    mb.className = 'mc ' + (s.r === 'Pass' ? 'p' : s.r === 'Issue' ? 'i' : s.r === 'N/A' ? 'n' : s.c ? 'd' : s.st === 'In progress' ? 'w' : '');
+  }
+}
+
+function stats() {
+  let done = 0, iss = 0, pass = 0, wip = 0, na = 0;
+  const pc = CAT.map(() => [0, 0]);
+  ALL.forEach(i => {
+    const s = g(i.wstg);
+    pc[i.ci][1]++;
+    if (s.c) { done++; pc[i.ci][0]++; }
+    if (s.r === 'Issue') iss++;
+    if (s.r === 'Pass') pass++;
+    if (s.st === 'In progress') wip++;
+    if (s.r === 'N/A') na++;
+  });
+
+  const total = ALL.length;
+  const pct = Math.round(done / total * 100);
+  $('#ov').textContent = `${done} of ${total} tests completed (${pct}%)`;
+  
+  $('#pb-p').style.width = (pass / total * 100) + '%';
+  $('#pb-i').style.width = (iss / total * 100) + '%';
+  $('#pb-w').style.width = (wip / total * 100) + '%';
+  $('#pb-d').style.width = ((done - pass - iss - na) > 0 ? (done - pass - iss - na) / total * 100 : 0) + '%';
+  $('#pb-n').style.width = (na / total * 100) + '%';
+
+  $('#kpi-all-val').textContent = total;
+  $('#kpi-pass-val').textContent = pass;
+  $('#kpi-issue-val').textContent = iss;
+  $('#kpi-wip-val').textContent = wip;
+
+  $('#tb-cnt-iss').textContent = P().issues.length;
+  $('#tb-cnt-iss').classList.toggle('badge-alert', P().issues.length > 0);
+
+  pc.forEach((p, k) => {
+    const el1 = $('#nc' + k), el2 = $('#sc' + k);
+    if (el1) el1.textContent = `${p[0]}/${p[1]}`;
+    if (el2) el2.textContent = `${p[0]} of ${p[1]} complete`;
+  });
+}
+
+function filt() {
+  const q = $('#q').value.trim().toLowerCase();
+  const f = $('#fs').value;
+  let n = 0;
+
+  ALL.forEach(i => {
+    const s = g(i.wstg);
+    const hasNote = !!(s.a || s.n);
+    const searchMatch = !q || i.hay.includes(q) || (s.a && s.a.toLowerCase().includes(q)) || (s.n && s.n.toLowerCase().includes(q));
+    const statusMatch = (f === 'all') ||
+      (f === 'open' && !s.c) ||
+      (f === 'wip' && s.st === 'In progress') ||
+      (f === 'done' && !!s.c) ||
+      (f === 'pass' && s.r === 'Pass') ||
+      (f === 'issue' && s.r === 'Issue') ||
+      (f === 'na' && s.r === 'N/A') ||
+      (f === 'notes' && hasNote);
+
+    const ok = searchMatch && statusMatch;
+    const cardEl = $(ID(i.wstg));
+    if (cardEl) cardEl.hidden = !ok;
+    if (ok) n++;
+  });
+
+  CAT.forEach((c, k) => {
+    const sec = $('#cat' + k);
+    if (sec) sec.hidden = !c.items.some(i => !$(ID(i.wstg)).hidden);
+  });
+  $('#none').hidden = n > 0;
+  $('#scnt').textContent = `Showing ${n} of ${ALL.length} tests`;
+}
+
+function all() {
+  ALL.forEach(i => upd(i.wstg));
+  stats();
+  filt();
+}
+
+function clearChecked(list, label) {
+  const ids = list.filter(i => g(i.wstg).c);
+  if (!ids.length) { alert('No checked tests to clear.'); return; }
+  if (!confirm(`Clear ${ids.length} checked test${ids.length > 1 ? 's' : ''}${label}?\nThis resets their status, result, affected item and notes. Unchecked tests are not modified.`)) return;
+  ids.forEach(i => { delete P().t[i.wstg]; upd(i.wstg); });
+  save(); stats(); filt();
+  toast(`Cleared ${ids.length} test${ids.length > 1 ? 's' : ''}`);
+}
+
+function markRemainingPass(list, label) {
+  const open = list.filter(i => !g(i.wstg).c);
+  if (!open.length) { alert('All tests in this section are already complete.'); return; }
+  if (!confirm(`Mark ${open.length} remaining test${open.length > 1 ? 's' : ''}${label} as Pass?`)) return;
+  open.forEach(i => {
+    const s = wr(i.wstg);
+    s.c = 1;
+    s.st = 'Done';
+    s.r = 'Pass';
+    upd(i.wstg);
+  });
+  save(); stats(); filt();
+  toast(`Marked ${open.length} tests as Pass`);
+}
+
+const lst = $('#list');
+lst.addEventListener('change', e => {
+  const a = e.target.closest('.t');
+  if (!a) return;
+  const w = a.dataset.w, x = e.target, s = wr(w);
+
+  if (x.matches('.ck')) {
+    s.c = x.checked ? 1 : 0;
+    s.st = x.checked ? 'Done' : (s.st === 'Done' ? 'Not started' : s.st);
+  } else if (x.matches('.f-st')) {
+    s.st = x.value;
+    s.c = x.value === 'Done' ? 1 : 0;
+  } else if (x.matches('.f-r')) {
+    s.r = x.value;
+    if (s.r === 'Pass' || s.r === 'Issue' || s.r === 'N/A') {
+      s.st = 'Done';
+      s.c = 1;
+    }
+  } else {
+    return;
+  }
+  save(); upd(w); stats(); filt();
+});
+
+lst.addEventListener('input', e => {
+  const x = e.target, a = x.closest('.t');
+  if (!a) return;
+  const s = wr(a.dataset.w);
+  if (x.matches('.f-a')) s.a = x.value;
+  else if (x.matches('.f-n')) s.n = x.value;
+  else return;
+  const hn = $('.has-note', a);
+  if (hn) hn.style.display = (s.a || s.n) ? 'inline-block' : 'none';
+  save();
+});
+
+lst.addEventListener('click', e => {
+  const x = e.target.closest('button');
+  if (!x) return;
+  const a = x.closest('.t');
+
+  if (x.matches('.ex')) {
+    const o = a.classList.toggle('open');
+    x.setAttribute('aria-expanded', o);
+    x.textContent = o ? 'Hide' : 'Details';
+  } else if (x.matches('.lg')) {
+    addIssue(a.dataset.w);
+  } else if (x.matches('.cl')) {
+    const c = x.closest('.cat'), o = c.classList.toggle('col');
+    x.setAttribute('aria-expanded', !o);
+  } else if (x.matches('.clr')) {
+    const k = +x.dataset.k;
+    clearChecked(CAT[k].items, ` in â€œ${CAT[k].title}â€`);
+  } else if (x.dataset.act === 'mark-pass') {
+    const k = +x.dataset.k;
+    markRemainingPass(CAT[k].items, ` in â€œ${CAT[k].title}â€`);
+  }
+});
+
+// Map jump
+$('#map').addEventListener('click', e => {
+  const b = e.target.closest('.mc');
+  if (!b) return;
+  tab('list');
+  const targetId = b.dataset.w;
+  const a = $(ID(targetId));
+  if (!a) return;
+  if (a.hidden) {
+    $('#q').value = '';
+    $('#fs').value = 'all';
+    filt();
+  }
+  const c = a.closest('.cat');
+  if (c) c.classList.remove('col');
+  if (!a.classList.contains('open')) {
+    const exBtn = $('.ex', a);
+    if (exBtn) exBtn.click();
+  }
+  a.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  a.classList.add('flash');
+  setTimeout(() => a.classList.remove('flash'), 1600);
+});
+
+// Search & Filter
+$('#q').addEventListener('input', filt);
+$('#fs').addEventListener('change', filt);
+$('#clr').onclick = () => clearChecked(ALL, '');
+$('#exa').onclick = () => $$('.t:not(.open) .ex').forEach(b => b.click());
+$('#coa').onclick = () => $$('.t.open .ex').forEach(b => b.click());
+
+// Keyboard shortcut: '/' to focus search, 'Esc' to blur/clear
+window.addEventListener('keydown', e => {
+  if (e.key === '/' && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
+    e.preventDefault();
+    tab('list');
+    $('#q').focus();
+    $('#q').select();
+  } else if (e.key === 'Escape' && document.activeElement === $('#q')) {
+    $('#q').value = '';
+    filt();
+    $('#q').blur();
+  }
+});
+
+// KPI Card quick filters
+$('#kpi-all').onclick = () => { tab('list'); $('#fs').value = 'all'; $('#q').value = ''; filt(); };
+$('#kpi-pass').onclick = () => { tab('list'); $('#fs').value = 'pass'; filt(); };
+$('#kpi-issue').onclick = () => { tab('list'); $('#fs').value = 'issue'; filt(); };
+$('#kpi-wip').onclick = () => { tab('list'); $('#fs').value = 'wip'; filt(); };
+
+// Scrollspy
+window.addEventListener('scroll', () => {
+  if (S.tab !== 'list') return;
+  const cats = $$('.cat');
+  let cur = '';
+  cats.forEach(c => {
+    const rect = c.getBoundingClientRect();
+    if (rect.top <= 180 && rect.bottom >= 180) cur = c.id;
+  });
+  if (cur) {
+    $$('#nav a').forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + cur));
+  }
+}, { passive: true });
+
+/* Target Scope / Projects */
+function projUI() {
+  const s = $('#proj');
+  s.innerHTML = Object.entries(S.p).map(([k, p]) => `<option value="${k}">${esc(p.name)}</option>`).join('');
+  s.value = S.cur;
+  $('#pdel').disabled = Object.keys(S.p).length < 2;
+}
+$('#proj').onchange = e => {
+  S.cur = e.target.value;
+  save();
+  renderAll();
+  toast('Switched to: ' + P().name);
+};
+$('#pnew').onclick = () => {
+  const n = prompt('Name for the new target scope (e.g. "Staging API" or "Auth Microservice"):');
+  if (!n || !n.trim()) return;
+  const id = 'p' + Date.now();
+  S.p[id] = { name: n.trim(), t: {}, issues: [], risk: {} };
+  S.cur = id;
+  save();
+  renderAll();
+  toast('Target created: ' + n.trim());
+};
+$('#pren').onclick = () => {
+  const n = prompt('Rename target scope:', P().name);
+  if (!n || !n.trim()) return;
+  P().name = n.trim();
+  save();
+  projUI();
+  toast('Target renamed');
+};
+$('#pdup').onclick = () => {
+  const n = prompt('Name for cloned target scope:', P().name + ' (Copy)');
+  if (!n || !n.trim()) return;
+  const id = 'p' + Date.now();
+  S.p[id] = JSON.parse(JSON.stringify(P()));
+  S.p[id].name = n.trim();
+  S.cur = id;
+  save();
+  renderAll();
+  toast('Target duplicated: ' + n.trim());
+};
+$('#pdel').onclick = () => {
+  if (Object.keys(S.p).length < 2) return;
+  if (!confirm(`Delete the target "${P().name}" including all test results, notes and vulnerabilities? This cannot be undone.`)) return;
+  delete S.p[S.cur];
+  S.cur = Object.keys(S.p)[0];
+  save();
+  renderAll();
+  toast('Target deleted');
+};
+
+/* Issues / Vulnerabilities */
+const RISK = ['Critical', 'High', 'Moderate', 'Low', 'OFI'];
+const LV = ['Low', 'Moderate', 'High'];
+
+function addIssue(w) {
+  const b = w ? BY[w] : null;
+  const testState = w ? g(w) : null;
+  
+  if (w) {
+    const s = wr(w);
+    s.r = 'Issue';
+    s.st = 'Done';
+    s.c = 1;
+    upd(w);
+    stats();
+  }
+
+  P().issues.push({
+    w: w || '',
+    name: b ? b.name : '',
+    risk: 'High',
+    lik: 'Moderate',
+    imp: 'High',
+    top: b && b.top10 && b.top10 !== 'NA' ? (T10[b.top10.split('\n')[0]] || b.top10) : '',
+    obs: testState && testState.n ? testState.n : '',
+    aff: testState && testState.a ? testState.a : '',
+    rec: '',
+    ev: ''
+  });
+
+  save();
+  renderIssues();
+  stats();
+  tab('issues');
+  toast('Vulnerability logged from ' + (w || 'new'));
+}
+
+function renderIssues() {
+  const sel = (k, l, a, v) => `<label>${l}<select data-k="${k}">${opts(a, v)}</select></label>`;
+  const ta = (k, l, v, ph='') => `<label class="w3">${l}<textarea data-k="${k}" rows="3" placeholder="${esc(ph)}">${esc(v)}</textarea></label>`;
+  const L = P().issues;
+
+  $('#il').innerHTML = L.length ? L.map((x, n) => `
+    <article class="is" data-n="${n}">
+      <div class="is-head">
+        <div class="is-title-wrap">
+          <h3>Issue #${n + 1}: ${esc(x.name || 'Untitled Vulnerability')}</h3>
+          <span class="sev-badge sev-${esc(x.risk || 'High')}">${esc(x.risk || 'High')}</span>
+        </div>
+        <span style="font-size:12px;color:var(--mu)">${x.w ? esc(x.w) : 'Custom'}</span>
+      </div>
+      <div class="g">
+        <label>Linked WSTG Test
+          <select data-k="w">
+            <option value="">None / Custom Issue</option>
+            ${ALL.map(i => `<option value="${i.wstg}"${x.w === i.wstg ? ' selected' : ''}>${i.wstg} ${esc(i.name)}</option>`).join('')}
+          </select>
+        </label>
+        <label class="w2">Vulnerability Title
+          <input data-k="name" value="${esc(x.name)}" placeholder="e.g. Stored XSS in Profile Bio">
+        </label>
+        ${sel('risk', 'Severity Risk', RISK, x.risk)}
+        ${sel('lik', 'Likelihood', LV, x.lik)}
+        ${sel('imp', 'Impact', LV, x.imp)}
+        <label class="w3">OWASP Top 10 Category
+          <input data-k="top" value="${esc(x.top)}" placeholder="e.g. A01:2021 â€” Broken Access Control">
+        </label>
+        <label class="w3">Affected URL / Endpoint / Parameter
+          <input data-k="aff" value="${esc(x.aff || '')}" placeholder="e.g. https://target.com/api/v1/user?id=123">
+        </label>
+        ${ta('obs', 'Observation & Security Implications', x.obs, 'Describe the vulnerability mechanism and business impact...')}
+        ${ta('ev', 'Proof of Concept / Test Evidence', x.ev, 'HTTP requests, responses, curl commands, payload parameters...')}
+        ${ta('rec', 'Remediation & Fix Recommendations', x.rec, 'Steps required to patch this vulnerability...')}
+      </div>
+      <div class="is-foot">
+        <button class="b sm dup" type="button">Duplicate</button>
+        <button class="b sm dng del" type="button">Delete Issue</button>
+      </div>
+    </article>
+  `).join('') : '<p class="empty">No vulnerabilities logged yet. Click â€œ+ Add Vulnerabilityâ€, or use â€œâš ï¸ Log as Vulnerabilityâ€ inside any test.</p>';
+}
+
+$('#addi').onclick = () => addIssue('');
+const il = $('#il');
+
+function handleIssueUpdate(e) {
+  const a = e.target.closest('.is'), k = e.target.dataset.k;
+  if (!a || !k) return;
+  const n = +a.dataset.n;
+  P().issues[n][k] = e.target.value;
+  if (k === 'w' && e.target.value) {
+    const b = BY[e.target.value];
+    if (b && !P().issues[n].name) {
+      P().issues[n].name = b.name;
+    }
+    if (b && b.top10 && b.top10 !== 'NA' && !P().issues[n].top) {
+      P().issues[n].top = T10[b.top10.split('\n')[0]] || b.top10;
+    }
+  }
+  if (k === 'risk' || k === 'name') {
+    const badge = $('.sev-badge', a);
+    if (badge && k === 'risk') {
+      badge.className = 'sev-badge sev-' + e.target.value;
+      badge.textContent = e.target.value;
+    }
+    const h3 = $('h3', a);
+    if (h3) h3.textContent = `Issue #${n + 1}: ${P().issues[n].name || 'Untitled Vulnerability'}`;
+  }
+  save();
+}
+il.addEventListener('input', handleIssueUpdate);
+il.addEventListener('change', handleIssueUpdate);
+
+il.addEventListener('click', e => {
+  const b = e.target.closest('button');
+  if (!b) return;
+  const a = b.closest('.is');
+  const n = +a.dataset.n;
+  
+  if (b.matches('.del')) {
+    if (!confirm(`Delete Issue #${n + 1} (${P().issues[n].name || 'Untitled'})?`)) return;
+    P().issues.splice(n, 1);
+    save();
+    renderIssues();
+    stats();
+    toast('Issue deleted');
+  } else if (b.matches('.dup')) {
+    const clone = JSON.parse(JSON.stringify(P().issues[n]));
+    clone.name += ' (Copy)';
+    P().issues.splice(n + 1, 0, clone);
+    save();
+    renderIssues();
+    stats();
+    toast('Issue duplicated');
+  }
+});
+
+/* Risk Calculator */
+const RG = [
+  ['Likelihood: Threat Agent', ['Skills required', 'Motive', 'Opportunity', 'Population Size']],
+  ['Likelihood: Vulnerability', ['Easy of Discovery', 'Ease of Exploit', 'Awareness', 'Intrusion Detection']],
+  ['Impact: Technical', ['Loss of confidentiality', 'Loss of Integrity', 'Loss of Availability', 'Loss of Accountability']],
+  ['Impact: Business', ['Financial damage', 'Reputation damage', 'Non-Compliance', 'Privacy violation']]
+];
+const MX = [
+  ['Note', 'Low', 'Moderate'],
+  ['Low', 'Moderate', 'High'],
+  ['Moderate', 'High', 'Critical']
+];
+const lv = x => x < 3 ? 0 : x < 6 ? 1 : 2;
+
+function buildRisk() {
+  $('#rk').innerHTML = RG.map(([t, f]) => `
+    <fieldset>
+      <legend>${t}</legend>
+      ${f.map(n => `
+        <label>${esc(n)}${D.comments[n] ? ` <span style="font-weight:400;color:var(--mu)">(${esc(D.comments[n])})</span>` : ''}
+          <select data-f="${esc(n)}">
+            <option value="">Select an option...</option>
+            ${D.refs[n].map(o => `<option>${esc(o[0])}</option>`).join('')}
+          </select>
+        </label>
+      `).join('')}
+    </fieldset>
+  `).join('');
+
+  const t = $('#mx');
+  t.innerHTML = `
+    <tr><th></th><th colspan="3">Impact</th></tr>
+    <tr><th>Likelihood</th><th>Low</th><th>Moderate</th><th>High</th></tr>
+  `;
+  [0, 1, 2].forEach(r => {
+    const tr = t.insertRow();
+    tr.innerHTML = `<th>${LV[r]}</th>` + [0, 1, 2].map(c => `<td data-c="${r}${c}">${MX[r][c]}</td>`).join('');
+  });
+}
+
+$('#rk').addEventListener('change', e => {
+  if (!e.target.dataset.f) return;
+  P().risk[e.target.dataset.f] = e.target.value;
+  save();
+  calc();
+});
+
+function calc() {
+  const R = P().risk || {};
+  $$('#rk select').forEach(s => s.value = R[s.dataset.f] || '');
+
+  const av = gs => {
+    const v = gs.flat().map(n => {
+      const o = D.refs[n].find(x => x[0] === R[n]);
+      return o ? o[1] : null;
+    }).filter(x => x != null);
+    return v.length ? v.reduce((a, b) => a + b) / v.length : null;
+  };
+
+  const L = av([RG[0][1], RG[1][1]]), I = av([RG[2][1], RG[3][1]]);
+  $('#ls').textContent = L == null ? 'â€”' : L.toFixed(2);
+  $('#is').textContent = I == null ? 'â€”' : I.toFixed(2);
+  const sv = L == null || I == null ? 'â€”' : MX[lv(L)][lv(I)];
+  $('#sv').textContent = sv;
+  $('#sv').dataset.s = sv;
+  $$('#mx td').forEach(td => td.classList.toggle('on', L != null && I != null && td.dataset.c === '' + lv(L) + lv(I)));
+}
+
+$('#r-reset').onclick = () => {
+  P().risk = {};
+  save();
+  calc();
+  toast('Risk calculator reset');
+};
+
+$('#r-apply').onclick = () => {
+  const sv = $('#sv').textContent;
+  const ls = $('#ls').textContent;
+  const is = $('#is').textContent;
+  if (sv === 'â€”') {
+    alert('Please select factors first to calculate a risk score.');
+    return;
+  }
+  const likName = ls === 'â€”' ? 'Moderate' : (parseFloat(ls) < 3 ? 'Low' : parseFloat(ls) < 6 ? 'Moderate' : 'High');
+  const impName = is === 'â€”' ? 'High' : (parseFloat(is) < 3 ? 'Low' : parseFloat(is) < 6 ? 'Moderate' : 'High');
+
+  P().issues.push({
+    w: '',
+    name: 'Vulnerability (OWASP Risk: ' + sv + ')',
+    risk: sv === 'Note' ? 'OFI' : sv,
+    lik: likName,
+    imp: impName,
+    top: '',
+    aff: '',
+    obs: `Risk calculated using OWASP Risk Rating Methodology:\n- Likelihood: ${ls} (${likName})\n- Impact: ${is} (${impName})\n- Overall Severity: ${sv}\n`,
+    rec: '',
+    ev: ''
+  });
+  save();
+  renderIssues();
+  stats();
+  tab('issues');
+  toast('Vulnerability created with calculated risk');
+};
+
+/* CWE Map Search */
+$('#q-cwe').addEventListener('input', e => {
+  const q = e.target.value.trim().toLowerCase();
+  $$('.cwe-group').forEach(grp => {
+    let match = false;
+    $$('li', grp).forEach(li => {
+      const ok = !q || li.textContent.toLowerCase().includes(q);
+      li.hidden = !ok;
+      if (ok) match = true;
+    });
+    grp.hidden = !match;
+  });
+});
+
+/* Tabs, Theme & Navigation */
+function tab(t) {
+  S.tab = t;
+  $$('.tb').forEach(b => b.setAttribute('aria-selected', b.dataset.t === t));
+  $('#p-list').hidden = t !== 'list';
+  $('#bar').hidden = t !== 'list';
+  ['issues', 'risk', 'cwe'].forEach(k => $('#p-' + k).hidden = t !== k);
+  save();
+  window.scrollTo({ top: 0, behavior: 'instant' });
+}
+$$('.tb').forEach(b => b.onclick = () => tab(b.dataset.t));
+
+function theme() {
+  if (S.theme) document.documentElement.dataset.theme = S.theme;
+  else delete document.documentElement.dataset.theme;
+  $('#theme').textContent = 'Theme: ' + (S.theme || 'auto');
+}
+$('#theme').onclick = () => {
+  S.theme = S.theme === '' ? 'light' : S.theme === 'light' ? 'dark' : '';
+  theme();
+  save();
+};
+
+function dl(name, text, type) {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([text], { type }));
+  a.download = name;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+}
+const day = () => new Date().toISOString().slice(0, 10);
+
+// Exports
+$('#exj').onclick = () => {
+  dl('wstg-hunt-backup-' + day() + '.json', JSON.stringify(S, null, 2), 'application/json');
+  toast('JSON backup exported');
+};
+
+$('#imp').onclick = () => $('#file').click();
+$('#file').onchange = e => {
+  const f = e.target.files[0];
+  if (!f) return;
+  const r = new FileReader();
+  r.onload = () => {
+    try {
+      const j = JSON.parse(r.result);
+      if (!j.p || !j.cur || !j.p[j.cur]) throw 0;
+      if (!confirm(`Replace all local targets with backup â€œ${f.name}â€?`)) return;
+      S = j;
+      sanitizeState();
+      save();
+      renderAll();
+      flush();
+      toast('Backup restored successfully');
+    } catch(x) {
+      alert('That file is not a valid WSTG Hunt Tracker backup.');
+    }
+  };
+  r.readAsText(f);
+  e.target.value = '';
+};
+
+// Checklist CSV
+$('#exc').onclick = () => {
+  const q = v => '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"';
+  const rows = [['Category', 'ID', 'WSTG-ID', 'Test Name', 'Status', 'Completed', 'Result', 'Affected Item', 'Notes']];
+  ALL.forEach(i => {
+    const s = g(i.wstg);
+    rows.push([CAT[i.ci].title, i.id, i.wstg, i.name, s.st, s.c ? 'Yes' : 'No', s.r, s.a, s.n]);
+  });
+  dl(`wstg-${P().name.replace(/\W+/g, '-').toLowerCase()}-${day()}.csv`, rows.map(r => r.map(q).join(',')).join('\n'), 'text/csv');
+  toast('Checklist CSV exported');
+};
+
+// Issues CSV
+$('#ex-iss-csv').onclick = () => {
+  const q = v => '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"';
+  const rows = [['Issue #', 'Severity', 'Title', 'WSTG Ref', 'Likelihood', 'Impact', 'OWASP Top 10', 'Affected Component', 'Observation', 'Evidence', 'Remediation']];
+  P().issues.forEach((x, n) => {
+    rows.push([n + 1, x.risk, x.name, x.w, x.lik, x.imp, x.top, x.aff || '', x.obs, x.ev, x.rec]);
+  });
+  dl(`vulnerabilities-${P().name.replace(/\W+/g, '-').toLowerCase()}-${day()}.csv`, rows.map(r => r.map(q).join(',')).join('\n'), 'text/csv');
+  toast('Issues CSV exported');
+};
+
+// Markdown Pentest Report
+function generateMarkdownReport() {
+  const proj = P();
+  let done = 0, iss = 0, pass = 0;
+  ALL.forEach(i => {
+    const s = g(i.wstg);
+    if (s.c) done++;
+    if (s.r === 'Issue') iss++;
+    if (s.r === 'Pass') pass++;
+  });
+
+  let md = `# Security Assessment Report: ${proj.name}\n\n`;
+  md += `**Date:** ${new Date().toLocaleDateString()}  \n`;
+  md += `**Standard:** OWASP Web Security Testing Guide (WSTG v4.2)  \n`;
+  md += `**Scope:** ${proj.name}  \n\n`;
+  
+  md += `## 1. Executive Summary\n\n`;
+  md += `| Metric | Count |\n`;
+  md += `| :--- | :--- |\n`;
+  md += `| Total Checklist Tests | ${ALL.length} |\n`;
+  md += `| Tests Completed | ${done} (${Math.round(done / ALL.length * 100)}%) |\n`;
+  md += `| Controls Passed | ${pass} |\n`;
+  md += `| Vulnerabilities Identified | ${proj.issues.length} |\n\n`;
+
+  md += `### Vulnerability Severity Breakdown\n\n`;
+  const counts = { Critical: 0, High: 0, Moderate: 0, Low: 0, OFI: 0 };
+  proj.issues.forEach(x => { if (counts[x.risk] !== undefined) counts[x.risk]++; });
+  md += `- **Critical:** ${counts.Critical}\n`;
+  md += `- **High:** ${counts.High}\n`;
+  md += `- **Moderate:** ${counts.Moderate}\n`;
+  md += `- **Low:** ${counts.Low}\n`;
+  md += `- **Informational (OFI):** ${counts.OFI}\n\n`;
+
+  md += `## 2. Table of Findings\n\n`;
+  if (!proj.issues.length) {
+    md += `*No vulnerabilities logged in this assessment.*\n\n`;
+  } else {
+    md += `| # | Severity | Title | WSTG Ref | Affected Item |\n`;
+    md += `| :- | :--- | :--- | :--- | :--- |\n`;
+    proj.issues.forEach((x, n) => {
+      md += `| ${n + 1} | **${x.risk}** | ${x.name || 'Untitled'} | ${x.w || 'N/A'} | \`${x.aff || 'N/A'}\` |\n`;
+    });
+    md += `\n\n`;
+
+    md += `## 3. Detailed Vulnerability Findings\n\n`;
+    proj.issues.forEach((x, n) => {
+      md += `### ${n + 1}. ${x.name || 'Untitled Vulnerability'}\n\n`;
+      md += `- **Severity:** ${x.risk} (Likelihood: ${x.lik}, Impact: ${x.imp})\n`;
+      if (x.w) md += `- **WSTG Reference:** ${x.w}\n`;
+      if (x.top) md += `- **OWASP Top 10:** ${x.top}\n`;
+      if (x.aff) md += `- **Affected Component:** \`${x.aff}\`\n\n`;
+      
+      if (x.obs) {
+        md += `#### Observation & Security Implication\n${x.obs}\n\n`;
+      }
+      if (x.ev) {
+        md += `#### Proof of Concept / Evidence\n\`\`\`\n${x.ev}\n\`\`\`\n\n`;
+      }
+      if (x.rec) {
+        md += `#### Remediation Recommendation\n${x.rec}\n\n`;
+      }
+      md += `---\n\n`;
+    });
+  }
+
+  md += `## 4. Assessment Methodology Checklist\n\n`;
+  CAT.forEach(c => {
+    md += `### ${c.title}\n\n`;
+    c.items.forEach(i => {
+      const s = g(i.wstg);
+      const mark = s.c ? 'x' : ' ';
+      const res = s.r ? ` [${s.r}]` : '';
+      md += `- [${mark}] **${i.wstg}:** ${i.name}${res}\n`;
+      if (s.a) md += `  - *Affected:* ${s.a}\n`;
+      if (s.n) md += `  - *Notes:* ${s.n}\n`;
+    });
+    md += `\n`;
+  });
+
+  return md;
+}
+
+$('#ex-rep').onclick = () => {
+  const md = generateMarkdownReport();
+  dl(`pentest-report-${P().name.replace(/\W+/g, '-').toLowerCase()}-${day()}.md`, md, 'text/markdown');
+  toast('Markdown Pentest Report downloaded');
+};
+$('#ex-iss-md').onclick = $('#ex-rep').onclick;
+
+function renderAll() {
+  projUI();
+  all();
+  renderIssues();
+  calc();
+}
+
+build();
+buildRisk();
+theme();
+renderAll();
+tab(S.tab || 'list');
+</script>
+</body>
+</html>
