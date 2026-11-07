@@ -101,3 +101,4 @@ Hosted on **GitHub Pages**:
 
 Open-source and available under the [MIT License](LICENSE).
 Checklist data based on the [OWASP Web Security Testing Guide](https://owasp.org/www-project-web-security-testing-guide/).
+

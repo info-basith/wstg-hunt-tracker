@@ -3,8 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>WSTG Hunt Tracker â€” OWASP Web Security Testing Checklist & Risk Calculator</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>ðŸ›¡ï¸</text></svg>">
+<title>WSTG Hunt Tracker &mdash; OWASP Web Security Testing Checklist &amp; Risk Calculator</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>&#128737;&#65039;</text></svg>">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#4f46e5">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -605,6 +609,14 @@ textarea {
   background: var(--ac);
   color: var(--onac);
 }
+.nav-alert {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--bad);
+  margin-right: 4px;
+}
 
 /* Category Sections */
 .cat {
@@ -860,6 +872,30 @@ textarea {
 }
 
 /* Issue Log */
+.sev-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+.sev-btn {
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 12px;
+  border: 1px solid var(--ln);
+  background: var(--sf);
+  color: var(--mu);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.sev-btn:hover, .sev-btn.active {
+  background: var(--ac);
+  color: var(--onac);
+  border-color: var(--ac);
+}
+
 .is {
   background: var(--sf);
   border: 1px solid var(--ln);
@@ -1098,7 +1134,7 @@ details.help p {
 
 /* Print Stylesheet */
 @media print {
-  .top-header, .tabs-wrap, .bar, .nav, .acts, .fl-actions, .is-foot, #toast {
+  .top-header, .tabs-wrap, .bar, .nav, .acts, .fl-actions, .is-foot, .sev-filters, #toast {
     display: none !important;
   }
   body { background: #fff; color: #000; font-size: 12pt; }
@@ -1114,7 +1150,7 @@ details.help p {
 <header class="top-header">
   <div class="top">
     <div class="brand">
-      <span class="brand-icon">ðŸ›¡ï¸</span>
+      <span class="brand-icon">&#128737;&#65039;</span>
       <div>
         <h1>WSTG Hunt Tracker <span class="ver-badge">OWASP WSTG v4.2</span></h1>
         <p class="sub">Comprehensive Web Security Testing Checklist, Vulnerability Logger &amp; Risk Rating</p>
@@ -1130,17 +1166,18 @@ details.help p {
         <button class="b sm dng" id="pdel" type="button" title="Delete target">Delete</button>
       </div>
       <button class="b" id="theme" type="button">Theme: auto</button>
-      <button class="b" id="ex-rep" type="button" title="Export Markdown Pentest Report">ðŸ“Š Report</button>
-      <button class="b" id="exj" type="button" title="Export JSON backup">ðŸ’¾ Backup</button>
-      <button class="b" id="imp" type="button" title="Import JSON backup">ðŸ“‚ Restore</button>
-      <button class="b" id="exc" type="button" title="Export Checklist CSV">ðŸ“‘ CSV</button>
+      <button class="b" id="ex-rep" type="button" title="Export Markdown Pentest Report">&#128202; Report</button>
+      <button class="b" id="p-print" type="button" title="Print or save as PDF">&#128424;&#65039; Print</button>
+      <button class="b" id="exj" type="button" title="Export JSON backup">&#128190; Backup</button>
+      <button class="b" id="imp" type="button" title="Import JSON backup">&#128194; Restore</button>
+      <button class="b" id="exc" type="button" title="Export Checklist CSV">&#128193; CSV</button>
       <input type="file" id="file" accept="application/json,.json" hidden>
     </div>
   </div>
 </header>
 
 <div id="warn" style="max-width:1380px;margin:10px auto;padding:10px 20px;background:var(--bad-bg);color:var(--bad);border-radius:6px;font-weight:600;" hidden>
-  âš ï¸ Local storage is disabled or blocked in this browser. Progress will be lost on tab close. Please export a JSON backup regularly.
+  &#9888;&#65039; Local storage is disabled or blocked in this browser. Progress will be lost on tab close. Please export a JSON backup regularly.
 </div>
 
 <section class="sum">
@@ -1199,10 +1236,10 @@ details.help p {
 
 <div class="tabs-wrap">
   <nav class="tabs" role="tablist">
-    <button class="tb" role="tab" data-t="list">ðŸ“‹ Checklist <span class="tab-badge" id="tb-cnt-list">122</span></button>
-    <button class="tb" role="tab" data-t="issues">ðŸš¨ Vulnerability Log <span class="tab-badge" id="tb-cnt-iss">0</span></button>
-    <button class="tb" role="tab" data-t="risk">âš–ï¸ Risk Calculator</button>
-    <button class="tb" role="tab" data-t="cwe">ðŸ“– CWE Reference Map</button>
+    <button class="tb" role="tab" data-t="list">&#128203; Checklist <span class="tab-badge" id="tb-cnt-list">122</span></button>
+    <button class="tb" role="tab" data-t="issues">&#128680; Vulnerability Log <span class="tab-badge" id="tb-cnt-iss">0</span></button>
+    <button class="tb" role="tab" data-t="risk">&#9878;&#65039; Risk Calculator</button>
+    <button class="tb" role="tab" data-t="cwe">&#128214; CWE Reference Map</button>
   </nav>
 </div>
 
@@ -1210,8 +1247,8 @@ details.help p {
 <div class="bar" id="bar">
   <div>
     <div class="search-box">
-      <span class="search-icon">ðŸ”</span>
-      <input id="q" type="search" placeholder="Search tests, tools, CWE, objectives, notesâ€¦" aria-label="Search">
+      <span class="search-icon">&#128269;</span>
+      <input id="q" type="search" placeholder="Search tests, tools, CWE, objectives, notes..." aria-label="Search">
       <span class="kbd-hint">/</span>
     </div>
     <select id="fs" aria-label="Filter status">
@@ -1237,8 +1274,8 @@ details.help p {
     <details class="help">
       <summary>Methodology &amp; How Results are Marked</summary>
       <p>
-        <b>Pass:</b> The security control is properly implemented and tested in according with OWASP best practices.<br>
-        <b>Issue:</b> The control is absent, bypassed, or vulnerable. Click <i>Log as issue</i> to add it to the Vulnerability Log.<br>
+        <b>Pass:</b> The security control is properly implemented and tested in accordance with OWASP best practices.<br>
+        <b>Issue:</b> The control is absent, bypassed, or vulnerable. Click <i>Log as Vulnerability</i> to add it to the Vulnerability Log.<br>
         <b>N/A:</b> Not applicable to the evaluated target scope architecture.<br>
         <b>In progress:</b> Currently under active analysis or exploitation.<br>
         Use the <b>Target</b> dropdown in the header to switch between scopes (e.g. Production, Staging, Internal API).
@@ -1262,6 +1299,14 @@ details.help p {
       <button class="b" id="ex-iss-csv" type="button">Export Issues CSV</button>
     </div>
   </div>
+  <div class="sev-filters" id="sev-filters">
+    <button class="sev-btn active" data-sev="all">All Severities</button>
+    <button class="sev-btn" data-sev="Critical">Critical</button>
+    <button class="sev-btn" data-sev="High">High</button>
+    <button class="sev-btn" data-sev="Moderate">Moderate</button>
+    <button class="sev-btn" data-sev="Low">Low</button>
+    <button class="sev-btn" data-sev="OFI">Informational</button>
+  </div>
   <div id="il"></div>
 </div>
 
@@ -1279,9 +1324,9 @@ details.help p {
   </div>
   <div class="rk" id="rk"></div>
   <div class="res">
-    <div>Likelihood score<b id="ls">â€”</b></div>
-    <div>Impact score<b id="is">â€”</b></div>
-    <div>Overall risk severity<b id="sv">â€”</b></div>
+    <div>Likelihood score<b id="ls">&mdash;</b></div>
+    <div>Impact score<b id="is">&mdash;</b></div>
+    <div>Overall risk severity<b id="sv">&mdash;</b></div>
   </div>
   <table id="mx">
     <tr><th></th><th colspan="3">Impact</th></tr>
@@ -1297,8 +1342,8 @@ details.help p {
       <p class="sub">Searchable reference mapping of OWASP WSTG test categories to MITRE CWE definitions.</p>
     </div>
     <div class="search-box" style="max-width:320px;">
-      <span class="search-icon">ðŸ”</span>
-      <input id="q-cwe" type="search" placeholder="Search CWEs by name or numberâ€¦" aria-label="Search CWEs">
+      <span class="search-icon">&#128269;</span>
+      <input id="q-cwe" type="search" placeholder="Search CWEs by name or number..." aria-label="Search CWEs">
     </div>
   </div>
   <div id="cwe-content"></div>
@@ -1313,6 +1358,13 @@ const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelect
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const lines=s=>String(s||'').split('\n').map(x=>x.trim()).filter(Boolean);
 const ID=w=>'#'+CSS.escape(w);
+
+// Service Worker for offline PWA support
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(() => {});
+  });
+}
 
 function toast(msg) {
   const t = $('#toast');
@@ -1391,16 +1443,16 @@ D.cwe.forEach(gp => gp.cwes.forEach(s => {
 }));
 
 const T10 = {
-  A1: 'A01:2021 â€” Broken Access Control',
-  A2: 'A02:2021 â€” Cryptographic Failures',
-  A3: 'A03:2021 â€” Injection',
-  A4: 'A04:2021 â€” Insecure Design',
-  A5: 'A05:2021 â€” Security Misconfiguration',
-  A6: 'A06:2021 â€” Vulnerable & Outdated Components',
-  A7: 'A07:2021 â€” Identification & Authentication Failures',
-  A8: 'A08:2021 â€” Software & Data Integrity Failures',
-  A9: 'A09:2021 â€” Security Logging & Monitoring Failures',
-  A10: 'A10:2021 â€” Server-Side Request Forgery (SSRF)'
+  A1: 'A01:2021 &mdash; Broken Access Control',
+  A2: 'A02:2021 &mdash; Cryptographic Failures',
+  A3: 'A03:2021 &mdash; Injection',
+  A4: 'A04:2021 &mdash; Insecure Design',
+  A5: 'A05:2021 &mdash; Security Misconfiguration',
+  A6: 'A06:2021 &mdash; Vulnerable & Outdated Components',
+  A7: 'A07:2021 &mdash; Identification & Authentication Failures',
+  A8: 'A08:2021 &mdash; Software & Data Integrity Failures',
+  A9: 'A09:2021 &mdash; Security Logging & Monitoring Failures',
+  A10: 'A10:2021 &mdash; Server-Side Request Forgery (SSRF)'
 };
 
 function bullets(s) {
@@ -1430,12 +1482,12 @@ function card(i) {
     <input type="checkbox" class="ck" aria-label="Mark ${i.wstg} complete">
     <div class="ti">
       <span class="wid">${i.wstg}</span>
-      ${i.url ? `<a class="nm" href="${esc(i.url)}" target="_blank" rel="noopener" title="Open official OWASP guide">${esc(i.name)} â†—</a>` : `<span class="nm">${esc(i.name)}</span>`}
+      ${i.url ? `<a class="nm" href="${esc(i.url)}" target="_blank" rel="noopener" title="Open official OWASP guide">${esc(i.name)} &#x2197;</a>` : `<span class="nm">${esc(i.name)}</span>`}
       ${merged ? '<span class="tag">Merged</span>' : ''}
       ${addedTag}
     </div>
     <span>${t10}</span>
-    <span class="has-note" style="display:none">ðŸ“ Note</span>
+    <span class="has-note" style="display:none">&#128221; Note</span>
     <span class="bd"></span>
     <button class="b sm ex" type="button" aria-expanded="false">Details</button>
   </div>
@@ -1466,7 +1518,7 @@ function card(i) {
         <textarea class="f-n" rows="3" placeholder="Enter test observations, HTTP requests, response headers, payloads..."></textarea>
       </label>
       <div class="fl-actions">
-        <button class="b pri lg" type="button">âš ï¸ Log as Vulnerability</button>
+        <button class="b pri lg" type="button">&#9888;&#65039; Log as Vulnerability</button>
       </div>
     </div>
   </div>
@@ -1480,7 +1532,7 @@ function build() {
     <section class="cat" id="cat${k}">
       <div class="ch">
         <button class="cl" type="button" aria-expanded="true">
-          <span class="cl-arrow">â–¾</span>
+          <span class="cl-arrow">&#9662;</span>
           <h2>${esc(c.title)}</h2>
         </button>
         <span class="cnt" id="sc${k}"></span>
@@ -1549,12 +1601,12 @@ function upd(w) {
 
 function stats() {
   let done = 0, iss = 0, pass = 0, wip = 0, na = 0;
-  const pc = CAT.map(() => [0, 0]);
+  const pc = CAT.map(() => [0, 0, 0]);
   ALL.forEach(i => {
     const s = g(i.wstg);
     pc[i.ci][1]++;
     if (s.c) { done++; pc[i.ci][0]++; }
-    if (s.r === 'Issue') iss++;
+    if (s.r === 'Issue') { iss++; pc[i.ci][2]++; }
     if (s.r === 'Pass') pass++;
     if (s.st === 'In progress') wip++;
     if (s.r === 'N/A') na++;
@@ -1580,8 +1632,10 @@ function stats() {
 
   pc.forEach((p, k) => {
     const el1 = $('#nc' + k), el2 = $('#sc' + k);
-    if (el1) el1.textContent = `${p[0]}/${p[1]}`;
-    if (el2) el2.textContent = `${p[0]} of ${p[1]} complete`;
+    if (el1) {
+      el1.innerHTML = (p[2] > 0 ? '<span class="nav-alert" title="Issues detected"></span>' : '') + `${p[0]}/${p[1]}`;
+    }
+    if (el2) el2.textContent = `${p[0]} of ${p[1]} complete` + (p[2] > 0 ? ` (${p[2]} issue${p[2]>1?'s':''})` : '');
   });
 }
 
@@ -1699,10 +1753,10 @@ lst.addEventListener('click', e => {
     x.setAttribute('aria-expanded', !o);
   } else if (x.matches('.clr')) {
     const k = +x.dataset.k;
-    clearChecked(CAT[k].items, ` in â€œ${CAT[k].title}â€`);
+    clearChecked(CAT[k].items, ` in "${CAT[k].title}"`);
   } else if (x.dataset.act === 'mark-pass') {
     const k = +x.dataset.k;
-    markRemainingPass(CAT[k].items, ` in â€œ${CAT[k].title}â€`);
+    markRemainingPass(CAT[k].items, ` in "${CAT[k].title}"`);
   }
 });
 
@@ -1826,6 +1880,7 @@ $('#pdel').onclick = () => {
 /* Issues / Vulnerabilities */
 const RISK = ['Critical', 'High', 'Moderate', 'Low', 'OFI'];
 const LV = ['Low', 'Moderate', 'High'];
+let curSevFilter = 'all';
 
 function addIssue(w) {
   const b = w ? BY[w] : null;
@@ -1865,7 +1920,11 @@ function renderIssues() {
   const ta = (k, l, v, ph='') => `<label class="w3">${l}<textarea data-k="${k}" rows="3" placeholder="${esc(ph)}">${esc(v)}</textarea></label>`;
   const L = P().issues;
 
-  $('#il').innerHTML = L.length ? L.map((x, n) => `
+  const filtered = L.map((x, n) => ({ x, n })).filter(item => {
+    return curSevFilter === 'all' || item.x.risk === curSevFilter;
+  });
+
+  $('#il').innerHTML = filtered.length ? filtered.map(({ x, n }) => `
     <article class="is" data-n="${n}">
       <div class="is-head">
         <div class="is-title-wrap">
@@ -1888,7 +1947,7 @@ function renderIssues() {
         ${sel('lik', 'Likelihood', LV, x.lik)}
         ${sel('imp', 'Impact', LV, x.imp)}
         <label class="w3">OWASP Top 10 Category
-          <input data-k="top" value="${esc(x.top)}" placeholder="e.g. A01:2021 â€” Broken Access Control">
+          <input data-k="top" value="${esc(x.top)}" placeholder="e.g. A01:2021 &mdash; Broken Access Control">
         </label>
         <label class="w3">Affected URL / Endpoint / Parameter
           <input data-k="aff" value="${esc(x.aff || '')}" placeholder="e.g. https://target.com/api/v1/user?id=123">
@@ -1898,15 +1957,26 @@ function renderIssues() {
         ${ta('rec', 'Remediation & Fix Recommendations', x.rec, 'Steps required to patch this vulnerability...')}
       </div>
       <div class="is-foot">
+        <button class="b sm copy-md" type="button" title="Copy as Markdown">&#128203; Copy Finding</button>
         <button class="b sm dup" type="button">Duplicate</button>
         <button class="b sm dng del" type="button">Delete Issue</button>
       </div>
     </article>
-  `).join('') : '<p class="empty">No vulnerabilities logged yet. Click â€œ+ Add Vulnerabilityâ€, or use â€œâš ï¸ Log as Vulnerabilityâ€ inside any test.</p>';
+  `).join('') : '<p class="empty">' + (L.length ? 'No vulnerabilities match the selected severity filter.' : 'No vulnerabilities logged yet. Click "+ Add Vulnerability", or use "&#9888;&#65039; Log as Vulnerability" inside any test.') + '</p>';
 }
 
 $('#addi').onclick = () => addIssue('');
 const il = $('#il');
+
+// Severity filters on Issue Log
+$('#sev-filters').addEventListener('click', e => {
+  const btn = e.target.closest('.sev-btn');
+  if (!btn) return;
+  $$('.sev-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  curSevFilter = btn.dataset.sev;
+  renderIssues();
+});
 
 function handleIssueUpdate(e) {
   const a = e.target.closest('.is'), k = e.target.dataset.k;
@@ -1957,6 +2027,22 @@ il.addEventListener('click', e => {
     renderIssues();
     stats();
     toast('Issue duplicated');
+  } else if (b.matches('.copy-md')) {
+    const x = P().issues[n];
+    let md = `### Finding: ${x.name || 'Untitled Vulnerability'}\n\n`;
+    md += `- **Severity:** ${x.risk} (Likelihood: ${x.lik}, Impact: ${x.imp})\n`;
+    if (x.w) md += `- **WSTG Reference:** ${x.w}\n`;
+    if (x.top) md += `- **OWASP Top 10:** ${x.top}\n`;
+    if (x.aff) md += `- **Affected Endpoint:** \`${x.aff}\`\n\n`;
+    if (x.obs) md += `#### Observation & Implications\n${x.obs}\n\n`;
+    if (x.ev) md += `#### Proof of Concept / Evidence\n\`\`\`\n${x.ev}\n\`\`\`\n\n`;
+    if (x.rec) md += `#### Remediation\n${x.rec}\n\n`;
+    
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(md).then(() => toast('Finding copied as Markdown'));
+    } else {
+      toast('Clipboard not available');
+    }
   }
 });
 
@@ -2020,9 +2106,9 @@ function calc() {
   };
 
   const L = av([RG[0][1], RG[1][1]]), I = av([RG[2][1], RG[3][1]]);
-  $('#ls').textContent = L == null ? 'â€”' : L.toFixed(2);
-  $('#is').textContent = I == null ? 'â€”' : I.toFixed(2);
-  const sv = L == null || I == null ? 'â€”' : MX[lv(L)][lv(I)];
+  $('#ls').textContent = L == null ? '-' : L.toFixed(2);
+  $('#is').textContent = I == null ? '-' : I.toFixed(2);
+  const sv = L == null || I == null ? '-' : MX[lv(L)][lv(I)];
   $('#sv').textContent = sv;
   $('#sv').dataset.s = sv;
   $$('#mx td').forEach(td => td.classList.toggle('on', L != null && I != null && td.dataset.c === '' + lv(L) + lv(I)));
@@ -2039,12 +2125,12 @@ $('#r-apply').onclick = () => {
   const sv = $('#sv').textContent;
   const ls = $('#ls').textContent;
   const is = $('#is').textContent;
-  if (sv === 'â€”') {
+  if (sv === '-') {
     alert('Please select factors first to calculate a risk score.');
     return;
   }
-  const likName = ls === 'â€”' ? 'Moderate' : (parseFloat(ls) < 3 ? 'Low' : parseFloat(ls) < 6 ? 'Moderate' : 'High');
-  const impName = is === 'â€”' ? 'High' : (parseFloat(is) < 3 ? 'Low' : parseFloat(is) < 6 ? 'Moderate' : 'High');
+  const likName = ls === '-' ? 'Moderate' : (parseFloat(ls) < 3 ? 'Low' : parseFloat(ls) < 6 ? 'Moderate' : 'High');
+  const impName = is === '-' ? 'High' : (parseFloat(is) < 3 ? 'Low' : parseFloat(is) < 6 ? 'Moderate' : 'High');
 
   P().issues.push({
     w: '',
@@ -2112,6 +2198,8 @@ function dl(name, text, type) {
 }
 const day = () => new Date().toISOString().slice(0, 10);
 
+$('#p-print').onclick = () => window.print();
+
 // Exports
 $('#exj').onclick = () => {
   dl('wstg-hunt-backup-' + day() + '.json', JSON.stringify(S, null, 2), 'application/json');
@@ -2127,7 +2215,7 @@ $('#file').onchange = e => {
     try {
       const j = JSON.parse(r.result);
       if (!j.p || !j.cur || !j.p[j.cur]) throw 0;
-      if (!confirm(`Replace all local targets with backup â€œ${f.name}â€?`)) return;
+      if (!confirm(`Replace all local targets with backup "${f.name}"?`)) return;
       S = j;
       sanitizeState();
       save();
